@@ -32,19 +32,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     private fun setupNavigation(){
         mBottomNavigation.setOnNavigationItemSelectedListener{
-            when(it.itemId){
-                R.id.action_settings -> {
-                    changeFragment(SettingsFragment())
-                    title = "Settings"
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.action_cities -> {
-                    changeFragment(CitiesFragment())
-                    title = "Cities"
-                    return@setOnNavigationItemSelectedListener true
-                }
-            }
-            false
+            mPresenter.onNavigationItemClicked(it.itemId)
+            true
         }
     }
 
@@ -52,5 +41,17 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.host_fragment, fragment)
         transaction.commit()
+    }
+
+    override fun navigateToCities() {
+        changeFragment(CitiesFragment())
+    }
+
+    override fun navigateToSettings() {
+        changeFragment(SettingsFragment())
+    }
+
+    override fun changeTitle(title: String) {
+        this.title = title
     }
 }
