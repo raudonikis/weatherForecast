@@ -1,6 +1,6 @@
 package com.raudonikiss.weatherforecast.contracts
 
-interface CityContract {
+interface CitiesContract {
 
     interface View{
 
