@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">weatherForecast</string>
+    <string name="ic_action_cities">Cities</string>
+    <string name="ic_action_settings">Settings</string>
 </resources>
