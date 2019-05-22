@@ -2,4 +2,5 @@
     <string name="app_name">weatherForecast</string>
     <string name="ic_action_cities">Cities</string>
     <string name="ic_action_settings">Settings</string>
+    <string name="label_no_cities">No cities added.</string>
 </resources>
