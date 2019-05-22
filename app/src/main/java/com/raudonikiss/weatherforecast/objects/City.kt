@@ -3,7 +3,7 @@ package com.raudonikiss.weatherforecast.objects
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "cities")
 data class City(
     @PrimaryKey
     val city_id : Long,

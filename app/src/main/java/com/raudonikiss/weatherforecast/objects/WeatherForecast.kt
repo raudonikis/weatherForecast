@@ -2,14 +2,13 @@ package com.raudonikiss.weatherforecast.objects
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
 
-@Entity
-data class Weather(
+@Entity(tableName = "weather_forecasts")
+data class WeatherForecast(
     @PrimaryKey(autoGenerate = true)
     val id : Long,
     val city_id : Long,
-    val dateTime : Date,
+    val dateTime : String,
     val temp : Double,
     val temp_min : Double,
     val temp_max : Double,
@@ -27,5 +26,5 @@ data class Weather(
     val wind_deg : Double?,
     val rain : Double?,
     val snow : Double?,
-    val dateTime_txt : Date
+    val dateTime_txt : String?
 )
