@@ -15,7 +15,7 @@ import com.raudonikiss.weatherforecast.objects.WeatherForecast
     exportSchema = false
 )
 
-abstract class Database : RoomDatabase()
+abstract class AppDatabase : RoomDatabase()
 {
     abstract fun cityDao(): CityDao
     abstract fun weatherForecastDao(): WeatherForecastDao

@@ -1,14 +1,18 @@
 package com.raudonikiss.weatherforecast
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.raudonikiss.weatherforecast.base.dependencyRetriever
 import com.raudonikiss.weatherforecast.contracts.MainContract
 import com.raudonikiss.weatherforecast.fragments.CitiesFragment
 import com.raudonikiss.weatherforecast.fragments.SettingsFragment
 import com.raudonikiss.weatherforecast.presenters.MainPresenter
+import com.raudonikiss.weatherforecast.repositories.MainRepository
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
@@ -16,6 +20,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     private lateinit var mBottomNavigation : BottomNavigationView
     //Variables
     private lateinit var mPresenter : MainContract.Presenter
+    //Repository
+    private lateinit var mainRepository : MainRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,11 +29,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         mBottomNavigation = bottom_navigation
         mPresenter = MainPresenter(this)
 
-        setupNavigation()
+        mainRepository = dependencyRetriever.repository
 
+        setupNavigation()
         if(savedInstanceState == null){ //Default page
             mBottomNavigation.selectedItemId = R.id.action_cities
         }
+
+
     }
 
     private fun setupNavigation(){
