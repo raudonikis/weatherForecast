@@ -2,6 +2,8 @@ package com.raudonikiss.weatherforecast
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -39,9 +41,6 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             Log.v("tag", "forecast:" + mDatabase.weatherForecastDao().getWeatherForecast("Kaunas", "LT"))
         }
 
-
-
-
         /*val call = mWebservice.getWeatherData("Kaunas,lt")
         call.enqueue(object : Callback<WeatherForecastResponseBody> {
             override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
@@ -68,8 +67,16 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         mNavController = findNavController(R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(mBottomNavigation, mNavController)
         // Set up the ActionBar to stay in sync with the NavController
-        /*supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        supportActionBar?.setDisplayShowHomeEnabled(false)*/
         NavigationUI.setupActionBarWithNavController(this, mNavController)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            android.R.id.home -> {
+                onBackPressed()
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 }

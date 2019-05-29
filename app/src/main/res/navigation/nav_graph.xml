@@ -16,10 +16,12 @@
     <fragment
             android:id="@+id/settingsFragment"
             android:name="com.raudonikiss.weatherforecast.fragments.SettingsFragment"
-            android:label="Settings"/>
+            android:label="Settings">
+        <action android:id="@+id/action_settingsFragment_to_addCityFragment" app:destination="@id/addCityFragment"/>
+    </fragment>
 
     <fragment
             android:id="@+id/addCityFragment"
             android:name="com.raudonikiss.weatherforecast.fragments.AddCityFragment"
-            android:label="AddCityFragment"/>
+            android:label="Add a city"/>
 </navigation>

@@ -12,7 +12,7 @@ import com.raudonikiss.weatherforecast.contracts.CitiesContract
 class AddCityFragment : Fragment(), AddCityContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_cities, container, false)
+        return inflater.inflate(R.layout.fragment_add_city, container, false)
     }
 
 }
