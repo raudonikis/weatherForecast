@@ -23,5 +23,6 @@
     <fragment
             android:id="@+id/addCityFragment"
             android:name="com.raudonikiss.weatherforecast.fragments.AddCityFragment"
-            android:label="Add a city"/>
+            android:label="Add a city"
+            tools:layout="@layout/fragment_add_city"/>
 </navigation>

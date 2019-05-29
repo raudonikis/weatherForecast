@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.google.android.libraries.places.api.Places
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.raudonikiss.weatherforecast.base.dependencyRetriever
 import com.raudonikiss.weatherforecast.contracts.MainContract
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         mDatabase = dependencyRetriever.db
 
         setupNavigation()
+        Places.initialize(this, BuildConfig.PlacesApiKey)
 
         thread{
             Log.v("tag", "forecast:" + mDatabase.weatherForecastDao().getWeatherForecast("Kaunas", "LT"))

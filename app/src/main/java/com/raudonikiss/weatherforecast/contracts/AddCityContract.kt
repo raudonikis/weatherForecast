@@ -1,7 +1,11 @@
 package com.raudonikiss.weatherforecast.contracts
 
-class AddCityContract {
+interface AddCityContract {
 
-    interface View{}
-    interface Presenter{}
+    interface View{
+        fun displayError()
+    }
+    interface Presenter{
+        fun onPlaceSelected(city : String?, country : String?)
+    }
 }

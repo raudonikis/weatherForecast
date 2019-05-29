@@ -3,4 +3,6 @@
     <string name="ic_action_cities">Cities</string>
     <string name="ic_action_settings">Settings</string>
     <string name="label_no_cities">No cities added.</string>
+    <string name="search_error">Could not select a city. Please try again.</string>
+    <string name="confirm">Confirm</string>
 </resources>
