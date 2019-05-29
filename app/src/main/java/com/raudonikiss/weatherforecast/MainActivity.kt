@@ -3,13 +3,13 @@ package com.raudonikiss.weatherforecast
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.raudonikiss.weatherforecast.base.dependencyRetriever
 import com.raudonikiss.weatherforecast.contracts.MainContract
 import com.raudonikiss.weatherforecast.data.AppDatabase
-import com.raudonikiss.weatherforecast.fragments.CitiesFragment
-import com.raudonikiss.weatherforecast.fragments.SettingsFragment
 import com.raudonikiss.weatherforecast.network.Webservice
 import com.raudonikiss.weatherforecast.presenters.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     //UI
     private lateinit var mBottomNavigation : BottomNavigationView
+    private lateinit var mNavController : NavController
     //Variables
     private lateinit var mPresenter : MainContract.Presenter
     private lateinit var mWebservice : Webservice
@@ -27,16 +28,12 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mBottomNavigation = bottom_navigation
         mPresenter = MainPresenter(this)
 
         mWebservice = dependencyRetriever.webservice
         mDatabase = dependencyRetriever.db
 
         setupNavigation()
-        if(savedInstanceState == null){ //Default page
-            mBottomNavigation.selectedItemId = R.id.action_cities
-        }
 
         thread{
             Log.v("tag", "forecast:" + mDatabase.weatherForecastDao().getWeatherForecast("Kaunas", "LT"))
@@ -66,28 +63,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     }
 
-    private fun setupNavigation(){
-        mBottomNavigation.setOnNavigationItemSelectedListener{
-            mPresenter.onNavigationItemClicked(it.itemId)
-            true
-        }
-    }
-
-    private fun changeFragment(fragment : Fragment){
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.host_fragment, fragment)
-        transaction.commit()
-    }
-
-    override fun navigateToCities() {
-        changeFragment(CitiesFragment())
-    }
-
-    override fun navigateToSettings() {
-        changeFragment(SettingsFragment())
-    }
-
-    override fun changeTitle(title: String) {
-        this.title = title
+    private fun setupNavigation() {
+        mBottomNavigation = bottom_navigation
+        mNavController = findNavController(R.id.nav_host_fragment)
+        NavigationUI.setupWithNavController(mBottomNavigation, mNavController)
+        // Set up the ActionBar to stay in sync with the NavController
+        /*supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)*/
+        NavigationUI.setupActionBarWithNavController(this, mNavController)
     }
 }

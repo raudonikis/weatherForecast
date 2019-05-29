@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_graph"
+            app:startDestination="@id/citiesFragment">
+
+    <fragment
+            android:id="@+id/citiesFragment"
+            android:name="com.raudonikiss.weatherforecast.fragments.CitiesFragment"
+            android:label="Cities"
+            tools:layout="@layout/fragment_cities">
+        <action android:id="@+id/action_action_cities_to_addCityFragment" app:destination="@id/addCityFragment"/>
+    </fragment>
+
+    <fragment
+            android:id="@+id/settingsFragment"
+            android:name="com.raudonikiss.weatherforecast.fragments.SettingsFragment"
+            android:label="Settings"/>
+
+    <fragment
+            android:id="@+id/addCityFragment"
+            android:name="com.raudonikiss.weatherforecast.fragments.AddCityFragment"
+            android:label="AddCityFragment"/>
+</navigation>

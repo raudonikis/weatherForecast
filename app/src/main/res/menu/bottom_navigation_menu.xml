@@ -3,14 +3,14 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/action_cities"
+            android:id="@id/citiesFragment"
             android:enabled="true"
             android:icon="@drawable/ic_action_cities"
             android:title="@string/ic_action_cities"
             app:showAsAction="ifRoom" />
 
     <item
-            android:id="@+id/action_settings"
+            android:id="@id/settingsFragment"
             android:enabled="true"
             android:icon="@drawable/ic_action_settings"
             android:title="@string/ic_action_settings"
