@@ -1,5 +1,6 @@
 package com.raudonikiss.weatherforecast.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -18,4 +19,7 @@ interface WeatherForecastDao {
 
     @Query("SELECT * FROM weather_forecasts")
     fun getAllWeatherForecasts(): Flowable<List<WeatherForecast>>
+
+    @Query("SELECT * FROM weather_forecasts")
+    fun getWeatherForecasts(): LiveData<List<WeatherForecast>>
 }

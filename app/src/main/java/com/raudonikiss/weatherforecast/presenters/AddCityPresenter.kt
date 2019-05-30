@@ -1,5 +1,6 @@
 package com.raudonikiss.weatherforecast.presenters
 
+import androidx.lifecycle.ViewModel
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
 import com.raudonikiss.weatherforecast.data.CityDao
 import com.raudonikiss.weatherforecast.objects.City
@@ -8,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class AddCityPresenter(val view: AddCityContract.View, private val cityDao : CityDao) : AddCityContract.Presenter {
+class AddCityPresenter(val view: AddCityContract.View, private val cityDao : CityDao) : ViewModel(), AddCityContract.Presenter {
 
     private var cityId = ""
     private var cityName = ""

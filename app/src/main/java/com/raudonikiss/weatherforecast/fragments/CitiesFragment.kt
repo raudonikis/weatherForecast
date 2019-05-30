@@ -2,10 +2,12 @@ package com.raudonikiss.weatherforecast.fragments
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +17,8 @@ import com.raudonikiss.weatherforecast.contracts.CitiesContract
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.presenters.CitiesPresenter
 import kotlinx.android.synthetic.main.fragment_cities.view.*
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class CitiesFragment : Fragment(), CitiesContract.View {
 
@@ -25,27 +27,39 @@ class CitiesFragment : Fragment(), CitiesContract.View {
     private lateinit var mViewManager: RecyclerView.LayoutManager
     private lateinit var mViewAdapter: CitiesAdapter
     //Variables
-    private lateinit var mPresenter: CitiesContract.Presenter
+    private lateinit var mPresenter: CitiesPresenter
     private val mSharedPreferences: SharedPreferences by inject()
     private lateinit var mRootView: View
     private var mTempUnits: String = ""
+    val model : CitiesPresenter by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
-        mPresenter = CitiesPresenter(this, get(), get())
+//        mPresenter = CitiesPresenter(get(), get())
         setUpRecyclerView()
         setUpListeners()
+
+        model.getAllCities().observe(this,
+            Observer { t -> Log.v("CitiesFragment", t.toString()) })
+        model.getAllForecasts().observe(this,
+            Observer { t -> updateList(t)})
         return mRootView
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+    }
+
     override fun onDetach() {
-        mPresenter.onDetach()
+//        mPresenter.onDetach()
         super.onDetach()
     }
 
     private fun setUpListeners() {
         mRootView.fb_add_city.setOnClickListener {
-            mPresenter.onFloatingButtonClicked()
+            navigateToAddCity()
         }
     }
 
@@ -60,6 +74,7 @@ class CitiesFragment : Fragment(), CitiesContract.View {
         mRecyclerView = mRootView.cities_recycler_view.apply {
             layoutManager = mViewManager
             adapter = mViewAdapter
+            hasFixedSize()
         }
 
     }

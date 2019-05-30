@@ -1,5 +1,6 @@
 package com.raudonikiss.weatherforecast.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -18,4 +19,7 @@ interface CityDao {
 
     @Query("SELECT * FROM cities")
     fun getAllCities(): Flowable<List<City>>
+
+    @Query("SELECT * FROM cities")
+    fun getCities(): LiveData<List<City>>
 }

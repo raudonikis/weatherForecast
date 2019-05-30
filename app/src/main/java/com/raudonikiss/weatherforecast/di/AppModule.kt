@@ -5,7 +5,9 @@ import androidx.room.Room
 import com.raudonikiss.weatherforecast.BuildConfig
 import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
+import com.raudonikiss.weatherforecast.presenters.CitiesPresenter
 import okhttp3.OkHttpClient
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -35,7 +37,7 @@ object AppModule{
         single {
             PreferenceManager.getDefaultSharedPreferences(get())
         }
-
+        viewModel { CitiesPresenter(get()) }
     }
 
 }
