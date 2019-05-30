@@ -6,13 +6,29 @@ class AddCityPresenter(val view: AddCityContract.View) : AddCityContract.Present
 
     private var city = ""
     private var country = ""
+    private var countryCode = ""
 
-    override fun onPlaceSelected(city: String?, country: String?) {
-        if(city != null && country != null){
+    override fun setPlaceData(city: String?, countryCode: String?, country: String?) {
+        if(city != null && country != null && countryCode != null){
             this.city = city
             this.country = country
+            this.countryCode = countryCode
         }else{
-            view.displayError()
+            view.displaySearchError()
+        }
+    }
+
+    override fun clearPlaceData() {
+        city = ""
+        country = ""
+        countryCode = ""
+    }
+
+    override fun onConfirmClicked() {
+        if(city.isNotBlank() && country.isNotBlank()){
+            //Add city to database
+        }else{
+            view.displayNoCityError()
         }
     }
 }

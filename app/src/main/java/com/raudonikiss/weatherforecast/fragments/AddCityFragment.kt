@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
 import com.raudonikiss.weatherforecast.presenters.AddCityPresenter
+import kotlinx.android.synthetic.main.fragment_add_city.*
 
 class AddCityFragment : Fragment(), AddCityContract.View {
 
@@ -24,42 +25,57 @@ class AddCityFragment : Fragment(), AddCityContract.View {
     private lateinit var mPresenter : AddCityContract.Presenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mPresenter = AddCityPresenter(this)
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
         return mRootView
     }
 
     override fun onStart() {
         super.onStart()
+        mPresenter = AddCityPresenter(this)
+        setUpListeners()
+    }
+
+    private fun setUpListeners(){
         setUpSearch()
+        button_confirm.setOnClickListener {
+            mPresenter.onConfirmClicked()
+        }
+        mAutoCompleteFragment.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener {
+            mAutoCompleteFragment.setText("")
+            mPresenter.clearPlaceData()
+        }
     }
 
     private fun setUpSearch(){
         mAutoCompleteFragment = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         mAutoCompleteFragment.setTypeFilter(TypeFilter.CITIES)
         mAutoCompleteFragment.setPlaceFields(listOf(Place.Field.NAME, Place.Field.ADDRESS_COMPONENTS))
+
         mAutoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener{
             override fun onPlaceSelected(place: Place) {
-
                 if(place.addressComponents != null){
                     for(component in place.addressComponents!!.asList()){
                         if(component.types[0] == "country"){
-                            mPresenter.onPlaceSelected(place.name, component.shortName)
+                            //City name, country code, country name
+                            mPresenter.setPlaceData(place.name, component.shortName, component.name)
                             break
                         }
                     }
                 }
             }
-
             override fun onError(p0: Status) {
-                displayError()
+                displaySearchError()
             }
 
         })
     }
 
-    override fun displayError(){
+    override fun displaySearchError() {
         Snackbar.make(mRootView, R.string.search_error, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun displayNoCityError() {
+        Snackbar.make(mRootView, R.string.no_city_error, Snackbar.LENGTH_SHORT).show()
     }
 
 }

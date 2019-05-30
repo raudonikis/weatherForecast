@@ -5,4 +5,5 @@
     <string name="label_no_cities">No cities added.</string>
     <string name="search_error">Could not select a city. Please try again.</string>
     <string name="confirm">Confirm</string>
+    <string name="no_city_error">Please choose a city.</string>
 </resources>

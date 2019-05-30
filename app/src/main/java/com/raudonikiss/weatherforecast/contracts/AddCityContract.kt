@@ -3,9 +3,12 @@ package com.raudonikiss.weatherforecast.contracts
 interface AddCityContract {
 
     interface View{
-        fun displayError()
+        fun displaySearchError()
+        fun displayNoCityError()
     }
     interface Presenter{
-        fun onPlaceSelected(city : String?, country : String?)
+        fun setPlaceData(city : String?, countryCode : String?, country : String?)
+        fun onConfirmClicked()
+        fun clearPlaceData()
     }
 }
