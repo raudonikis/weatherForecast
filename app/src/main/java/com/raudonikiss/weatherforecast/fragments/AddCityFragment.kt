@@ -13,9 +13,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
-import com.raudonikiss.weatherforecast.base.dependencyRetriever
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
-import com.raudonikiss.weatherforecast.presenters.AddCityPresenter
 import kotlinx.android.synthetic.main.fragment_add_city.*
 
 class AddCityFragment : Fragment(), AddCityContract.View {
@@ -33,7 +31,7 @@ class AddCityFragment : Fragment(), AddCityContract.View {
 
     override fun onStart() {
         super.onStart()
-        mPresenter = AddCityPresenter(this, activity!!.dependencyRetriever.db.cityDao())
+//        mPresenter = AddCityPresenter(this, activity!!.dependencyRetriever.db.cityDao())
         setUpListeners()
     }
 

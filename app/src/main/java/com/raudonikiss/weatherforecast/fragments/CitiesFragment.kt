@@ -10,13 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
-import com.raudonikiss.weatherforecast.base.dependencyRetriever
 import com.raudonikiss.weatherforecast.contracts.CitiesContract
 import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.presenters.CitiesPresenter
 import kotlinx.android.synthetic.main.fragment_cities.view.*
+import org.koin.android.ext.android.inject
 
 class CitiesFragment : Fragment(), CitiesContract.View {
 
@@ -26,18 +26,14 @@ class CitiesFragment : Fragment(), CitiesContract.View {
     private lateinit var mViewAdapter : CitiesAdapter
     //Variables
     private lateinit var mPresenter : CitiesContract.Presenter
-    private lateinit var mDatabase : AppDatabase
-    private lateinit var mWebservice : Webservice
 
     private lateinit var rootView: View
     private var mTempUnits : String? = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_cities, container, false)
-        mDatabase = activity!!.dependencyRetriever.db
-        mWebservice = activity!!.dependencyRetriever.webservice
-        mPresenter = CitiesPresenter(this, mDatabase, mWebservice)
-        mTempUnits = activity!!.dependencyRetriever.sharedPreferences.getString("units", "°K")
+//        mPresenter = CitiesPresenter(this, mDatabase, mWebservice)
+//        mTempUnits = activity!!.dependencyRetriever.sharedPreferences.getString("units", "°K")*/
         setUpRecyclerView()
         setUpListeners()
         return rootView
