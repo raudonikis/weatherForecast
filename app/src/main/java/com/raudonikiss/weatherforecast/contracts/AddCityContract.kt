@@ -5,10 +5,13 @@ interface AddCityContract {
     interface View{
         fun displaySearchError()
         fun displayNoCityError()
+        fun displaySuccess()
+        fun navigateToCities()
     }
     interface Presenter{
-        fun setPlaceData(city : String?, countryCode : String?, country : String?)
+        fun setPlaceData(cityId: String?, cityName : String?, countryId : String?, countryName : String?)
         fun onConfirmClicked()
         fun clearPlaceData()
+        fun onDetach()
     }
 }
