@@ -17,18 +17,18 @@ class AddCityPresenter(val view: AddCityContract.View, private val cityDao : Cit
 
     private val disposables = CompositeDisposable()
 
-    override fun setPlaceData(cityId: String?, cityName: String?, countryId: String?, countryName: String?) {
+    override fun setCityData(cityId: String?, cityName: String?, countryId: String?, countryName: String?) {
         if(cityId != null && cityName != null && countryId != null && countryName != null){
             this.cityId = cityId
             this.cityName = cityName
             this.countryId = countryId
             this.countryName = countryName
         }else{
-            view.displaySearchError()
+            view.displayError(ERROR_SEARCH)
         }
     }
 
-    override fun clearPlaceData() {
+    override fun clearCityData() {
         cityId = ""
         cityName = ""
         countryId = ""
@@ -43,24 +43,38 @@ class AddCityPresenter(val view: AddCityContract.View, private val cityDao : Cit
         if(!isCityDataEmpty()){
 
             val city = City(cityId, cityName, countryId, countryName)
+            addCity(city)
 
-            disposables.add(Completable.fromAction {
-               cityDao.insertCity(city)
-            }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    view.navigateToCities()
-                    view.displaySuccess()
-                }, {
-
-                } ))
         }else{
-            view.displayNoCityError()
+            view.displayError(ERROR_NO_DATA)
         }
     }
 
     private fun isCityDataEmpty(): Boolean{
         return cityId.isBlank() || cityName.isBlank() || countryId.isBlank() || countryName.isBlank()
+    }
+
+    private fun addCity(city: City){
+        var result = 0L
+
+        disposables.add(Completable.fromAction {
+            result = cityDao.insertCity(city)
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if(result == 1L){
+                    view.navigateToCities()
+                    view.displaySuccess()
+                }else{
+                    view.displayError(ERROR_DUPLICATE)
+                }
+            })
+    }
+
+    companion object{
+        const val ERROR_SEARCH = 1
+        const val ERROR_DUPLICATE = 2
+        const val ERROR_NO_DATA = 3
     }
 }

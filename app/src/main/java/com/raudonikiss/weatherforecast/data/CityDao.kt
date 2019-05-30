@@ -10,11 +10,8 @@ import io.reactivex.Flowable
 @Dao
 interface CityDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCity(item: City)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllCities(all: List<City>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertCity(item: City): Long
 
     @Query("DELETE FROM cities")
     fun deleteAllCities()

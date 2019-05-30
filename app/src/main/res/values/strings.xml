@@ -7,4 +7,5 @@
     <string name="confirm">Confirm</string>
     <string name="no_city_error">Please choose a city.</string>
     <string name="city_add_success">City added successfully.</string>
+    <string name="error_duplicate_city">This city already exists.</string>
 </resources>
