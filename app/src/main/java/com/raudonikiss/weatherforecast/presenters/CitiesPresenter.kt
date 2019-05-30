@@ -14,7 +14,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CitiesPresenter(val view: CitiesContract.View, val mDatabase : AppDatabase, val mWebservice : Webservice) : CitiesContract.Presenter {
+class CitiesPresenter(val view: CitiesContract.View, val mDatabase: AppDatabase, private val mWebservice: Webservice) :
+    CitiesContract.Presenter {
 
     var disposable = CompositeDisposable()
 
@@ -23,8 +24,7 @@ class CitiesPresenter(val view: CitiesContract.View, val mDatabase : AppDatabase
         observeAllWeatherData()
     }
 
-    private fun observeAllWeatherData()
-    {
+    private fun observeAllWeatherData() {
         disposable.add(
             mDatabase.weatherForecastDao().getAllWeatherForecasts()
                 .subscribeOn(Schedulers.io())
@@ -36,16 +36,16 @@ class CitiesPresenter(val view: CitiesContract.View, val mDatabase : AppDatabase
                 }, {
                     Log.d("response error", it.message)
 
-                })) // ON DETACH CLEAR
+                })
+        )
     }
-    private fun observeAllCities()
-    {
+
+    private fun observeAllCities() {
         disposable.add(
             mDatabase.cityDao().getAllCities()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                    for (city in it)
-                    {
+                    for (city in it) {
                         getWeatherData(city)
                     }
                     Log.d("response", it.toString())
@@ -53,30 +53,34 @@ class CitiesPresenter(val view: CitiesContract.View, val mDatabase : AppDatabase
                 }, {
                     Log.d("response error", it.message)
 
-                }))
+                })
+        )
     }
 
-    private fun getWeatherData(city:City)
-    {
+    private fun getWeatherData(city: City) {
         val call = mWebservice.getWeatherData(city.name + "," + city.countryCode)
-    call.enqueue(object : Callback<WeatherForecastResponseBody> {
-        override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
-        }
+        call.enqueue(object : Callback<WeatherForecastResponseBody> {
+            override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
+            }
 
-        override fun onResponse(call: Call<WeatherForecastResponseBody>, response: Response<WeatherForecastResponseBody>) {
-            val body = response.body()
-            if(body != null){
+            override fun onResponse(
+                call: Call<WeatherForecastResponseBody>,
+                response: Response<WeatherForecastResponseBody>
+            ) {
+                val body = response.body()
+                if (body != null) {
 
-                Log.d("response", body.toString())
+                    Log.d("response", body.toString())
 
-                val weatherForecast = body.toWeatherForecast()
-                disposable.add(
-                    Completable.fromAction{
-                        mDatabase.weatherForecastDao().insertWeatherForecast(weatherForecast)
-                    }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe())
-                    }
+                    val weatherForecast = body.toWeatherForecast()
+                    disposable.add(
+                        Completable.fromAction {
+                            mDatabase.weatherForecastDao().insertWeatherForecast(weatherForecast)
+                        }.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe()
+                    )
+                }
             }
         })
     }

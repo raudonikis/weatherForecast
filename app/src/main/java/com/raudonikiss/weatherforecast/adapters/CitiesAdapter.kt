@@ -9,15 +9,8 @@ import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import kotlinx.android.synthetic.main.city_list_item.view.*
 import kotlin.math.roundToInt
 
-class CitiesAdapter(private var dataSet : List<WeatherForecast>, temp_units : String?) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
+class CitiesAdapter(private var dataSet : List<WeatherForecast>, private val tempUnits : String?) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
 
-    private var tempUnits = "°K"
-
-    init {
-        if(temp_units != null){
-            tempUnits = temp_units
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)

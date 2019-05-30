@@ -14,7 +14,11 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
+import com.raudonikiss.weatherforecast.data.AppDatabase
+import com.raudonikiss.weatherforecast.presenters.AddCityPresenter
 import kotlinx.android.synthetic.main.fragment_add_city.*
+import kotlinx.android.synthetic.main.fragment_add_city.view.*
+import org.koin.android.ext.android.get
 
 class AddCityFragment : Fragment(), AddCityContract.View {
 
@@ -26,13 +30,9 @@ class AddCityFragment : Fragment(), AddCityContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
-        return mRootView
-    }
-
-    override fun onStart() {
-        super.onStart()
-//        mPresenter = AddCityPresenter(this, activity!!.dependencyRetriever.db.cityDao())
+        mPresenter = AddCityPresenter(this, get<AppDatabase>().cityDao())
         setUpListeners()
+        return mRootView
     }
 
     override fun onDetach() {
@@ -42,7 +42,7 @@ class AddCityFragment : Fragment(), AddCityContract.View {
 
     private fun setUpListeners(){
         setUpSearch()
-        button_confirm.setOnClickListener {
+        mRootView.button_confirm.setOnClickListener {
             mPresenter.onConfirmClicked()
         }
         mAutoCompleteFragment.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener {

@@ -1,4 +1,4 @@
-package com.raudonikiss.weatherforecast.base
+package com.raudonikiss.weatherforecast.di
 
 import android.preference.PreferenceManager
 import androidx.room.Room
@@ -35,6 +35,7 @@ object AppModule{
         single {
             PreferenceManager.getDefaultSharedPreferences(get())
         }
+
     }
 
 }
