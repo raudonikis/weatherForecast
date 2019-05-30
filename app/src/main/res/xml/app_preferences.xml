@@ -5,7 +5,7 @@
     <ListPreference
             android:key="units"
             android:title="Temperature units"
-            android:defaultValue="°C"
+            android:defaultValue="°K"
             android:entries="@array/temperature_units_array"
             android:entryValues="@array/temperature_units_array"
             android:summary="%s"/>

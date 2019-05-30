@@ -1,6 +1,8 @@
 package com.raudonikiss.weatherforecast.base
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import androidx.room.Room
 import com.raudonikiss.weatherforecast.BuildConfig
 import com.raudonikiss.weatherforecast.data.AppDatabase
@@ -30,6 +32,10 @@ class DependencyRetriever(private val context : Context) {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Webservice::class.java)
+    }
+
+    val sharedPreferences : SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(context)
     }
 }
 

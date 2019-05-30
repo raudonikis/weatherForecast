@@ -1,7 +1,6 @@
 package com.raudonikiss.weatherforecast
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -16,7 +15,6 @@ import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
 import com.raudonikiss.weatherforecast.presenters.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
@@ -39,11 +37,11 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         setupNavigation()
         Places.initialize(this, BuildConfig.PlacesApiKey)
 
-        thread{
+        /*thread{
             Log.v("tag", "forecast:" + mDatabase.weatherForecastDao().getWeatherForecast("Kaunas", "LT"))
-        }
+        }*/
 
-        /*val call = mWebservice.getWeatherData("Kaunas,lt")
+        /*val call = mWebservice.getWeatherData("Kaunas,LT")
         call.enqueue(object : Callback<WeatherForecastResponseBody> {
             override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "FAIL", Toast.LENGTH_LONG).show()
