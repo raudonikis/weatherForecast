@@ -21,19 +21,18 @@ import org.koin.android.ext.android.inject
 class CitiesFragment : Fragment(), CitiesContract.View {
 
     //UI
-    private lateinit var mRecyclerView : RecyclerView
-    private lateinit var mViewManager : RecyclerView.LayoutManager
-    private lateinit var mViewAdapter : CitiesAdapter
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mViewManager: RecyclerView.LayoutManager
+    private lateinit var mViewAdapter: CitiesAdapter
     //Variables
-    private lateinit var mPresenter : CitiesContract.Presenter
-    private val mSharedPreferences : SharedPreferences by inject()
+    private lateinit var mPresenter: CitiesContract.Presenter
+    private val mSharedPreferences: SharedPreferences by inject()
     private lateinit var mRootView: View
-    private var mTempUnits : String = ""
+    private var mTempUnits: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
         mPresenter = CitiesPresenter(this, get(), get())
-        mTempUnits = mSharedPreferences.getString("units", "°K")
         setUpRecyclerView()
         setUpListeners()
         return mRootView
@@ -44,14 +43,18 @@ class CitiesFragment : Fragment(), CitiesContract.View {
         super.onDetach()
     }
 
-    private fun setUpListeners(){
+    private fun setUpListeners() {
         mRootView.fb_add_city.setOnClickListener {
             mPresenter.onFloatingButtonClicked()
         }
     }
 
-    private fun setUpRecyclerView(){
+    private fun setUpRecyclerView() {
         mViewManager = LinearLayoutManager(activity)
+
+        val units = mSharedPreferences.getString("units", "°K")
+        if (units != null) mTempUnits = units
+
         mViewAdapter = CitiesAdapter(listOf(), mTempUnits)
 
         mRecyclerView = mRootView.cities_recycler_view.apply {
@@ -67,9 +70,9 @@ class CitiesFragment : Fragment(), CitiesContract.View {
 
     override fun updateList(list: List<WeatherForecast>) {
         mViewAdapter.updateList(list)
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             mRootView.label_no_cities.visibility = View.VISIBLE
-        }else{
+        } else {
             mRootView.label_no_cities.visibility = View.GONE
         }
     }
