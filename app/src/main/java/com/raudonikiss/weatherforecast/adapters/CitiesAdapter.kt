@@ -8,7 +8,15 @@ import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import kotlinx.android.synthetic.main.city_list_item.view.*
 
-class CitiesAdapter(private var dataSet : List<WeatherForecast>) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
+class CitiesAdapter(private var dataSet : List<WeatherForecast>, private val temp_units : String?) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
+
+    private var tempUnits = "°K"
+
+    init {
+        if(temp_units != null){
+            tempUnits = temp_units
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -31,8 +39,8 @@ class CitiesAdapter(private var dataSet : List<WeatherForecast>) : RecyclerView.
         fun bindView(item: WeatherForecast){
             view.country_name.text = item.country
             view.city_name.text = item.city_name
-            view.temperature.text = item.temp.toString()
-            view.min_max_temperatures.text = "${item.temp_max} / ${item.temp_min}"
+            view.temperature.text = "${item.temp} $tempUnits"
+            view.min_max_temperatures.text = "${item.temp_max} / ${item.temp_min} $tempUnits"
         }
     }
 }

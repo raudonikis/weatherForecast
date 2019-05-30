@@ -80,8 +80,8 @@ class AddCityFragment : Fragment(), AddCityContract.View {
     override fun displayError(id: Int) {
         when(id){
             ERROR_SEARCH -> Snackbar.make(mRootView, R.string.search_error, Snackbar.LENGTH_SHORT).show()
-            ERROR_DUPLICATE -> Snackbar.make(mRootView, R.string.no_city_error, Snackbar.LENGTH_SHORT).show()
-            ERROR_NO_DATA -> Snackbar.make(mRootView, R.string.error_duplicate_city, Snackbar.LENGTH_SHORT).show()
+            ERROR_DUPLICATE -> Snackbar.make(mRootView, R.string.error_duplicate_city, Snackbar.LENGTH_SHORT).show()
+            ERROR_NO_DATA -> Snackbar.make(mRootView, R.string.no_city_error, Snackbar.LENGTH_SHORT).show()
         }
     }
     override fun displaySuccess() {

@@ -63,11 +63,11 @@ class AddCityPresenter(val view: AddCityContract.View, private val cityDao : Cit
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                if(result == 1L){
+                if(result == -1L){
+                    view.displayError(ERROR_DUPLICATE)
+                }else{
                     view.navigateToCities()
                     view.displaySuccess()
-                }else{
-                    view.displayError(ERROR_DUPLICATE)
                 }
             })
     }
