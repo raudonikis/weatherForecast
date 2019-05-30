@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.raudonikiss.weatherforecast.objects.City
+import io.reactivex.Flowable
 
 @Dao
 interface CityDao {
@@ -19,5 +20,5 @@ interface CityDao {
     fun deleteAllCities()
 
     @Query("SELECT * FROM cities")
-    fun getAllCities(): List<City>
+    fun getAllCities(): Flowable<List<City>>
 }
