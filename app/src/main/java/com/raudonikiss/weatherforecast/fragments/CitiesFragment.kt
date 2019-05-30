@@ -16,7 +16,7 @@ import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.presenters.CitiesPresenter
-import kotlinx.android.synthetic.main.fragment_cities.*
+import kotlinx.android.synthetic.main.fragment_cities.view.*
 
 class CitiesFragment : Fragment(), CitiesContract.View {
 
@@ -29,20 +29,18 @@ class CitiesFragment : Fragment(), CitiesContract.View {
     private lateinit var mDatabase : AppDatabase
     private lateinit var mWebservice : Webservice
 
+    private lateinit var rootView: View
     private var mTempUnits : String? = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_cities, container, false)
-    }
-
-    override fun onStart() {
-        super.onStart()
+        rootView = inflater.inflate(R.layout.fragment_cities, container, false)
         mDatabase = activity!!.dependencyRetriever.db
         mWebservice = activity!!.dependencyRetriever.webservice
         mPresenter = CitiesPresenter(this, mDatabase, mWebservice)
         mTempUnits = activity!!.dependencyRetriever.sharedPreferences.getString("units", "°K")
         setUpRecyclerView()
         setUpListeners()
+        return rootView
     }
 
     override fun onDetach() {
@@ -51,7 +49,7 @@ class CitiesFragment : Fragment(), CitiesContract.View {
     }
 
     private fun setUpListeners(){
-        fb_add_city.setOnClickListener {
+        rootView.fb_add_city.setOnClickListener {
             mPresenter.onFloatingButtonClicked()
         }
     }
@@ -60,7 +58,7 @@ class CitiesFragment : Fragment(), CitiesContract.View {
         mViewManager = LinearLayoutManager(activity)
         mViewAdapter = CitiesAdapter(listOf(), mTempUnits)
 
-        mRecyclerView = cities_recycler_view.apply {
+        mRecyclerView = rootView.cities_recycler_view.apply {
             layoutManager = mViewManager
             adapter = mViewAdapter
         }
@@ -74,9 +72,9 @@ class CitiesFragment : Fragment(), CitiesContract.View {
     override fun updateList(list: List<WeatherForecast>) {
         mViewAdapter.updateList(list)
         if(list.isEmpty()){
-            label_no_cities.visibility = View.VISIBLE
+            rootView.label_no_cities.visibility = View.VISIBLE
         }else{
-            label_no_cities.visibility = View.GONE
+            rootView.label_no_cities.visibility = View.GONE
         }
     }
 

@@ -36,30 +36,6 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         setupNavigation()
         Places.initialize(this, BuildConfig.PlacesApiKey)
-
-        /*thread{
-            Log.v("tag", "forecast:" + mDatabase.weatherForecastDao().getWeatherForecast("Kaunas", "LT"))
-        }*/
-
-        /*val call = mWebservice.getWeatherData("Kaunas,LT")
-        call.enqueue(object : Callback<WeatherForecastResponseBody> {
-            override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "FAIL", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onResponse(call: Call<WeatherForecastResponseBody>, response: Response<WeatherForecastResponseBody>) {
-                Toast.makeText(this@MainActivity, "SUCCESS", Toast.LENGTH_LONG).show()
-                val body = response.body()
-                if(body != null){
-                    thread{
-                        val weatherForecast = body.toWeatherForecast()
-                        mDatabase.weatherForecastDao().insertWeatherForecast(weatherForecast)
-                    }
-                }
-                Log.v("tag", "response body:"+ response.body())
-            }
-        })*/
-
     }
 
     private fun setupNavigation() {

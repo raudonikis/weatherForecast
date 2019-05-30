@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import kotlinx.android.synthetic.main.city_list_item.view.*
+import kotlin.math.roundToInt
 
-class CitiesAdapter(private var dataSet : List<WeatherForecast>, private val temp_units : String?) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
+class CitiesAdapter(private var dataSet : List<WeatherForecast>, temp_units : String?) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
 
     private var tempUnits = "°K"
 
@@ -39,8 +40,23 @@ class CitiesAdapter(private var dataSet : List<WeatherForecast>, private val tem
         fun bindView(item: WeatherForecast){
             view.country_name.text = item.country
             view.city_name.text = item.city_name
-            view.temperature.text = "${item.temp} $tempUnits"
-            view.min_max_temperatures.text = "${item.temp_max} / ${item.temp_min} $tempUnits"
+            view.temperature.text = "${getTemperature(item.temp)} $tempUnits"
+            view.min_max_temperatures.text = "${getTemperature(item.temp_max)} / ${getTemperature(item.temp_min)} $tempUnits"
         }
+    }
+
+    private fun getTemperature(temp: Double): Int{
+        return when(tempUnits){
+            "°C" -> convertToCelsius(temp)
+            "°F" -> convertToFahrenheit(temp)
+            else -> temp.roundToInt()
+        }
+    }
+
+    private fun convertToCelsius(temp: Double): Int{
+        return (temp - 273.15).roundToInt()
+    }
+    private fun convertToFahrenheit(temp: Double): Int{
+        return ((temp - 273.15) * 9/5 + 32).roundToInt()
     }
 }
