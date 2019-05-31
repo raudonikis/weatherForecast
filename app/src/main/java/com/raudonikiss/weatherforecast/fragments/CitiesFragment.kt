@@ -11,11 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
 import com.raudonikiss.weatherforecast.contracts.CitiesContract
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
-import com.raudonikiss.weatherforecast.presenters.CitiesPresenter
+import com.raudonikiss.weatherforecast.presenters.CitiesViewModel
 import kotlinx.android.synthetic.main.fragment_cities.view.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -26,40 +27,37 @@ class CitiesFragment : Fragment(), CitiesContract.View {
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mViewManager: RecyclerView.LayoutManager
     private lateinit var mViewAdapter: CitiesAdapter
+    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     //Variables
-    private lateinit var mPresenter: CitiesPresenter
     private val mSharedPreferences: SharedPreferences by inject()
     private lateinit var mRootView: View
     private var mTempUnits: String = ""
-    val model : CitiesPresenter by viewModel()
+    private val viewModel: CitiesViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
-//        mPresenter = CitiesPresenter(get(), get())
         setUpRecyclerView()
         setUpListeners()
-
-        model.getAllCities().observe(this,
-            Observer { t -> Log.v("CitiesFragment", t.toString()) })
-        model.getAllForecasts().observe(this,
-            Observer { t -> updateList(t)})
         return mRootView
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setUpObservers()
     }
 
     override fun onDetach() {
-//        mPresenter.onDetach()
+        viewModel.dispose()
         super.onDetach()
     }
 
     private fun setUpListeners() {
         mRootView.fb_add_city.setOnClickListener {
             navigateToAddCity()
+        }
+        mSwipeRefreshLayout = mRootView.swipe_to_refresh
+        mSwipeRefreshLayout.setOnRefreshListener {
+            viewModel.updateAllForecasts()
         }
     }
 
@@ -77,6 +75,16 @@ class CitiesFragment : Fragment(), CitiesContract.View {
             hasFixedSize()
         }
 
+    }
+    private fun setUpObservers(){
+        viewModel.getAllCities().observe(this,
+            Observer { t ->
+                Log.v("CitiesFragment", t.toString())
+                /*model.updateAllForecasts()*/
+            })
+        viewModel.getAllForecasts().observe(this,
+            Observer { t -> updateList(t)
+                mSwipeRefreshLayout.isRefreshing = false})
     }
 
     override fun navigateToAddCity() {
