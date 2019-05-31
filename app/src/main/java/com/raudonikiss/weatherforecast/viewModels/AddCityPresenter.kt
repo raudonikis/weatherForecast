@@ -1,4 +1,4 @@
-package com.raudonikiss.weatherforecast.presenters
+package com.raudonikiss.weatherforecast.viewModels
 
 import androidx.lifecycle.ViewModel
 import com.raudonikiss.weatherforecast.contracts.AddCityContract

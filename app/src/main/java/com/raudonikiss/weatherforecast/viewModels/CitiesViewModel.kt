@@ -1,4 +1,4 @@
-package com.raudonikiss.weatherforecast.presenters
+package com.raudonikiss.weatherforecast.viewModels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -27,11 +27,6 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
     }
 
     var disposable = CompositeDisposable()
-
-    /*init {
-        observeAllCities()
-        observeAllWeatherData()
-    }*/
 
     fun getAllCities(): LiveData<List<City>> {
         return cities

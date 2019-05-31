@@ -9,22 +9,18 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.raudonikiss.weatherforecast.contracts.MainContract
-import com.raudonikiss.weatherforecast.presenters.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), MainContract.View {
+class MainActivity : AppCompatActivity(){
 
     //UI
     private lateinit var mBottomNavigation: BottomNavigationView
     private lateinit var mNavController: NavController
     //Variables
-    private lateinit var mPresenter: MainContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mPresenter = MainPresenter(this)
 
         setupNavigation()
         Places.initialize(this, BuildConfig.PlacesApiKey)

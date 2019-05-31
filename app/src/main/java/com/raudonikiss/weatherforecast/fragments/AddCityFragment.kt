@@ -15,8 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
 import com.raudonikiss.weatherforecast.data.AppDatabase
-import com.raudonikiss.weatherforecast.presenters.AddCityPresenter
-import kotlinx.android.synthetic.main.fragment_add_city.*
+import com.raudonikiss.weatherforecast.viewModels.AddCityPresenter
 import kotlinx.android.synthetic.main.fragment_add_city.view.*
 import org.koin.android.ext.android.get
 

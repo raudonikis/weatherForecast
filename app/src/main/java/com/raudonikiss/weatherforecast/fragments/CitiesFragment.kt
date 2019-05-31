@@ -14,14 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
-import com.raudonikiss.weatherforecast.contracts.CitiesContract
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
-import com.raudonikiss.weatherforecast.presenters.CitiesViewModel
+import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.fragment_cities.view.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class CitiesFragment : Fragment(), CitiesContract.View {
+class CitiesFragment : Fragment() {
 
     //UI
     private lateinit var mRecyclerView: RecyclerView
@@ -76,22 +75,26 @@ class CitiesFragment : Fragment(), CitiesContract.View {
         }
 
     }
-    private fun setUpObservers(){
+
+    private fun setUpObservers() {
         viewModel.getAllCities().observe(this,
             Observer { t ->
                 Log.v("CitiesFragment", t.toString())
                 /*model.updateAllForecasts()*/
             })
         viewModel.getAllForecasts().observe(this,
-            Observer { t -> updateList(t)
-                mSwipeRefreshLayout.isRefreshing = false})
+            Observer { t ->
+                updateList(t)
+                Log.v("CitiesFragment", t.toString())
+                mSwipeRefreshLayout.isRefreshing = false
+            })
     }
 
-    override fun navigateToAddCity() {
+    private fun navigateToAddCity() {
         findNavController().navigate(R.id.addCityFragment)
     }
 
-    override fun updateList(list: List<WeatherForecast>) {
+    private fun updateList(list: List<WeatherForecast>) {
         mViewAdapter.updateList(list)
         if (list.isEmpty()) {
             mRootView.label_no_cities.visibility = View.VISIBLE
