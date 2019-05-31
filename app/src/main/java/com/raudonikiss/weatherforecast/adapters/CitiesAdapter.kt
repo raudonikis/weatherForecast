@@ -4,17 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import kotlinx.android.synthetic.main.city_list_item.view.*
 import kotlin.math.roundToInt
+import android.R
+
+
 
 class CitiesAdapter(private var dataSet : List<WeatherForecast>, private val tempUnits : String?) : RecyclerView.Adapter<CitiesAdapter.ViewHolder>(){
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.city_list_item, parent, false)
+            .inflate(com.raudonikiss.weatherforecast.R.layout.city_list_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -28,13 +30,15 @@ class CitiesAdapter(private var dataSet : List<WeatherForecast>, private val tem
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val view : View) : RecyclerView.ViewHolder(view){
+    inner class ViewHolder(private val view : View) : RecyclerView.ViewHolder(view){
 
         fun bindView(item: WeatherForecast){
             view.country_name.text = item.country
             view.city_name.text = item.city_name
             view.temperature.text = "${getTemperature(item.temp)} $tempUnits"
             view.min_max_temperatures.text = "${getTemperature(item.temp_max)} / ${getTemperature(item.temp_min)} $tempUnits"
+            val resource = view.context.resources.getIdentifier("ic_"+item.icon, "drawable", view.context.packageName)
+            view.weather_icon.setImageResource(resource)
         }
     }
 

@@ -19,7 +19,7 @@ import com.raudonikiss.weatherforecast.viewModels.AddCityPresenter
 import kotlinx.android.synthetic.main.fragment_add_city.view.*
 import org.koin.android.ext.android.get
 
-class AddCityFragment : Fragment(), AddCityContract.View {
+class AddCityFragment : Fragment(), AddCityContract.View{
 
     //UI
     private lateinit var mAutoCompleteFragment : AutocompleteSupportFragment
@@ -29,8 +29,8 @@ class AddCityFragment : Fragment(), AddCityContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
-        mPresenter = AddCityPresenter(this, get<AppDatabase>().cityDao())
         setUpListeners()
+        mPresenter = AddCityPresenter(this, get<AppDatabase>().cityDao())
         return mRootView
     }
 
@@ -42,7 +42,7 @@ class AddCityFragment : Fragment(), AddCityContract.View {
     private fun setUpListeners(){
         setUpSearch()
         mRootView.button_confirm.setOnClickListener {
-            mPresenter.onConfirmClicked()
+            mPresenter.saveCity()
         }
         mAutoCompleteFragment.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener {
             mAutoCompleteFragment.setText("")

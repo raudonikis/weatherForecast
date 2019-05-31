@@ -9,7 +9,7 @@ interface AddCityContract {
     }
     interface Presenter{
         fun setCityData(cityId: String?, cityName : String?, countryId : String?, countryName : String?)
-        fun onConfirmClicked()
+        fun saveCity()
         fun clearCityData()
         fun onDetach()
     }

@@ -18,7 +18,7 @@ import retrofit2.Response
 
 class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservice: Webservice) : ViewModel() {
 
-    private val cities: LiveData<List<City>> by lazy {
+    private val cityList: LiveData<List<City>> by lazy {
         mDatabase.cityDao().getCities()
     }
 
@@ -26,10 +26,10 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
         mDatabase.weatherForecastDao().getWeatherForecasts()
     }
 
-    var disposable = CompositeDisposable()
+    private val disposable = CompositeDisposable()
 
     fun getAllCities(): LiveData<List<City>> {
-        return cities
+        return cityList
     }
 
     fun getAllForecasts(): LiveData<List<WeatherForecast>> {
@@ -37,7 +37,7 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
     }
 
     fun updateAllForecasts() {
-        cities.value?.forEach {
+        cityList.value?.forEach {
             updateForecast(it)
         }
     }
@@ -46,6 +46,7 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
         val call = mWebservice.getWeatherData(city.name + "," + city.countryCode)
         call.enqueue(object : Callback<WeatherForecastResponseBody> {
             override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
+
             }
 
             override fun onResponse(
@@ -69,72 +70,6 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
             }
         })
     }
-
-    /*private fun observeAllWeatherData() {
-        disposable.add(
-            mDatabase.weatherForecastDao().getAllWeatherForecasts()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe({
-
-                    view.updateList(it)
-                    Log.d("response", it.toString())
-
-                }, {
-                    Log.d("response error", it.message)
-
-                })
-        )
-    }
-
-    private fun observeAllCities() {
-        disposable.add(
-            mDatabase.cityDao().getAllCities()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                    for (city in it) {
-                        getWeatherData(city)
-                    }
-                    Log.d("response", it.toString())
-
-                }, {
-                    Log.d("response error", it.message)
-
-                })
-        )
-    }
-
-    private fun getWeatherData(city: City) {
-        val call = mWebservice.getWeatherData(city.name + "," + city.countryCode)
-        call.enqueue(object : Callback<WeatherForecastResponseBody> {
-            override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
-            }
-
-            override fun onResponse(
-                call: Call<WeatherForecastResponseBody>,
-                response: Response<WeatherForecastResponseBody>
-            ) {
-                val body = response.body()
-                if (body != null) {
-
-                    Log.d("response", body.toString())
-
-                    val weatherForecast = body.toWeatherForecast()
-                    disposable.add(
-                        Completable.fromAction {
-                            mDatabase.weatherForecastDao().insertWeatherForecast(weatherForecast)
-                        }.subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe()
-                    )
-                }
-            }
-        })
-    }*/
-
-
-    /*override fun onFloatingButtonClicked() {
-        view.navigateToAddCity()
-    }*/
 
     fun dispose() {
         disposable.dispose()

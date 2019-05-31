@@ -8,17 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.raudonikiss.weatherforecast.MainActivity
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.fragment_cities.view.*
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.viewModel
 
 class CitiesFragment : Fragment() {
 
@@ -31,17 +32,21 @@ class CitiesFragment : Fragment() {
     private val mSharedPreferences: SharedPreferences by inject()
     private lateinit var mRootView: View
     private var mTempUnits: String = ""
-    private val viewModel: CitiesViewModel by viewModel()
+    private lateinit var viewModel: CitiesViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
         setUpRecyclerView()
         setUpListeners()
+
         return mRootView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+                viewModel = activity?.run { ViewModelProviders.of(this).get(CitiesViewModel::class.java)
+                }
+            ?: throw Exception("Invalid Activity")
         setUpObservers()
     }
 
@@ -77,11 +82,6 @@ class CitiesFragment : Fragment() {
     }
 
     private fun setUpObservers() {
-        viewModel.getAllCities().observe(this,
-            Observer { t ->
-                Log.v("CitiesFragment", t.toString())
-                /*model.updateAllForecasts()*/
-            })
         viewModel.getAllForecasts().observe(this,
             Observer { t ->
                 updateList(t)

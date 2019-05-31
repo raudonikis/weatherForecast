@@ -1,15 +1,23 @@
 package com.raudonikiss.weatherforecast
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.raudonikiss.weatherforecast.fragments.CitiesFragment
+import com.raudonikiss.weatherforecast.objects.WeatherForecast
+import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.viewmodel.ext.android.getViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(){
 
@@ -17,6 +25,7 @@ class MainActivity : AppCompatActivity(){
     private lateinit var mBottomNavigation: BottomNavigationView
     private lateinit var mNavController: NavController
     //Variables
+    private lateinit var viewModel : CitiesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +33,8 @@ class MainActivity : AppCompatActivity(){
 
         setupNavigation()
         Places.initialize(this, BuildConfig.PlacesApiKey)
+        viewModel = getViewModel()
+        setUpObservers()
     }
 
     private fun setupNavigation() {
@@ -38,6 +49,14 @@ class MainActivity : AppCompatActivity(){
             .build()
         // Set up the ActionBar to stay in sync with the NavController
         NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration)
+    }
+
+    private fun setUpObservers(){
+        viewModel.getAllCities().observe(this,
+            Observer { t ->
+                Log.v("CitiesFragment", t.toString())
+                viewModel.updateAllForecasts()
+            })
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class AddCityPresenter(val view: AddCityContract.View, private val cityDao : CityDao) : ViewModel(), AddCityContract.Presenter {
+class AddCityPresenter(private val view: AddCityContract.View, private val cityDao : CityDao) : ViewModel(), AddCityContract.Presenter {
 
     private var cityId = ""
     private var cityName = ""
@@ -40,7 +40,7 @@ class AddCityPresenter(val view: AddCityContract.View, private val cityDao : Cit
         disposables.dispose()
     }
 
-    override fun onConfirmClicked() {
+    override fun saveCity() {
         if(!isCityDataEmpty()){
 
             val city = City(cityId, cityName, countryId, countryName)
