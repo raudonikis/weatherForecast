@@ -1,10 +1,7 @@
 package com.raudonikiss.weatherforecast.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.raudonikiss.weatherforecast.objects.City
 import io.reactivex.Flowable
 
@@ -14,8 +11,8 @@ interface CityDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertCity(item: City): Long
 
-    @Query("DELETE FROM cities")
-    fun deleteAllCities()
+    @Delete
+    fun removeCity(item: City)
 
     @Query("SELECT * FROM cities")
     fun getAllCities(): Flowable<List<City>>

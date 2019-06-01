@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import kotlinx.android.synthetic.main.city_list_item.view.*
 import kotlin.math.roundToInt
-import android.R
 
 
 

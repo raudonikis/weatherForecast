@@ -43,7 +43,7 @@ class AddCityPresenter(private val view: AddCityContract.View, private val cityD
     override fun saveCity() {
         if(!isCityDataEmpty()){
 
-            val city = City(cityId, cityName, countryId, countryName)
+            val city = City(cityId, cityName, countryName, countryId)
             addCity(city)
 
         }else{

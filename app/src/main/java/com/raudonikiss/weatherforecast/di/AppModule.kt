@@ -24,7 +24,7 @@ object AppModule{
         }
 
         single {
-            Room.databaseBuilder(get(), AppDatabase::class.java, "db").build()
+            Room.databaseBuilder(get(), AppDatabase::class.java, "databas").build()
         }
         single {
             retrofit2.Retrofit.Builder()

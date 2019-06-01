@@ -5,35 +5,29 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.raudonikiss.weatherforecast.fragments.CitiesFragment
-import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     //UI
     private lateinit var mBottomNavigation: BottomNavigationView
     private lateinit var mNavController: NavController
     //Variables
-    private lateinit var viewModel : CitiesViewModel
+    private val viewModel: CitiesViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setupNavigation()
         Places.initialize(this, BuildConfig.PlacesApiKey)
-        viewModel = getViewModel()
         setUpObservers()
     }
 
@@ -51,10 +45,10 @@ class MainActivity : AppCompatActivity(){
         NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration)
     }
 
-    private fun setUpObservers(){
+    private fun setUpObservers() {
         viewModel.getAllCities().observe(this,
             Observer { t ->
-                Log.v("CitiesFragment", t.toString())
+                Log.v(TAG, t.toString())
                 viewModel.updateAllForecasts()
             })
     }
@@ -67,5 +61,9 @@ class MainActivity : AppCompatActivity(){
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
     }
 }

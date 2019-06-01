@@ -42,11 +42,26 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
         }
     }
 
+    fun removeListItem(position: Int) {
+        val city = cityList.value?.get(position)
+        if (city != null) {
+            disposable.add(
+                Completable.fromAction {
+                    mDatabase.weatherForecastDao().removeForecast(city.name, city.countryCode)
+                    mDatabase.cityDao().removeCity(city)
+                }.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+            )
+
+        }
+    }
+
     private fun updateForecast(city: City) {
         val call = mWebservice.getWeatherData(city.name + "," + city.countryCode)
         call.enqueue(object : Callback<WeatherForecastResponseBody> {
             override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
-
+                Log.v("CitiesFragment", "Failure")
             }
 
             override fun onResponse(

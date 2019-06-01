@@ -10,10 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.raudonikiss.weatherforecast.MainActivity
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
@@ -44,8 +44,9 @@ class CitiesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-                viewModel = activity?.run { ViewModelProviders.of(this).get(CitiesViewModel::class.java)
-                }
+        viewModel = activity?.run {
+            ViewModelProviders.of(this).get(CitiesViewModel::class.java)
+        }
             ?: throw Exception("Invalid Activity")
         setUpObservers()
     }
@@ -78,6 +79,7 @@ class CitiesFragment : Fragment() {
             adapter = mViewAdapter
             hasFixedSize()
         }
+        ItemTouchHelper(itemTouchHelper).attachToRecyclerView(mRecyclerView)
 
     }
 
@@ -101,6 +103,21 @@ class CitiesFragment : Fragment() {
         } else {
             mRootView.label_no_cities.visibility = View.GONE
         }
+    }
+
+    private val itemTouchHelper = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            viewModel.removeListItem(viewHolder.adapterPosition)
+        }
+
     }
 
 }
