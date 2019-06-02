@@ -17,6 +17,9 @@ interface WeatherForecastDao {
     @Query("DELETE FROM weather_forecasts WHERE city_name=:city_name AND country=:country_id")
     fun removeForecast(city_name: String, country_id: String)
 
+    @Delete
+    fun deleteForecast(item: WeatherForecast)
+
     @Query("SELECT * FROM weather_forecasts WHERE city_name=:city_name AND country =:country_id")
     fun getWeatherForecast(city_name: String, country_id: String): WeatherForecast
 

@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.raudonikiss.weatherforecast.BuildConfig
 import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
+import com.raudonikiss.weatherforecast.viewModels.AddCityPresenter
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.viewmodel.dsl.viewModel
@@ -24,7 +25,7 @@ object AppModule{
         }
 
         single {
-            Room.databaseBuilder(get(), AppDatabase::class.java, "databasee").build()
+            Room.databaseBuilder(get(), AppDatabase::class.java, "database").build()
         }
         single {
             retrofit2.Retrofit.Builder()
@@ -38,6 +39,7 @@ object AppModule{
             PreferenceManager.getDefaultSharedPreferences(get())
         }
         viewModel { CitiesViewModel(get(), get()) }
+        viewModel { AddCityPresenter(get(), get()) }
     }
 
 }

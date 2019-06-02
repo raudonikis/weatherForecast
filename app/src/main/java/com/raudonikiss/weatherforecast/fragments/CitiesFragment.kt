@@ -20,6 +20,7 @@ import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.fragment_cities.view.*
 import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class CitiesFragment : Fragment() {
 
@@ -32,7 +33,7 @@ class CitiesFragment : Fragment() {
     private val mSharedPreferences: SharedPreferences by inject()
     private lateinit var mRootView: View
     private var mTempUnits: String = ""
-    private lateinit var viewModel: CitiesViewModel
+    private val viewModel: CitiesViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
@@ -42,12 +43,13 @@ class CitiesFragment : Fragment() {
         return mRootView
     }
 
+    override fun onDetach() {
+        viewModel.dispose()
+        super.onDetach()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = activity?.run {
-            ViewModelProviders.of(this).get(CitiesViewModel::class.java)
-        }
-            ?: throw Exception("Invalid Activity")
         setUpObservers()
     }
 
@@ -58,8 +60,8 @@ class CitiesFragment : Fragment() {
         mSwipeRefreshLayout = mRootView.swipe_to_refresh
         mSwipeRefreshLayout.setOnRefreshListener {
             //FIXME temporary fix
-            if(viewModel.getAllCities().value!!.isNotEmpty())
-            viewModel.updateAllForecasts()
+            if(viewModel.getAllForecasts().value!!.isNotEmpty())
+                viewModel.updateAllForecasts()
             else{
                 mSwipeRefreshLayout.isRefreshing = false
             }

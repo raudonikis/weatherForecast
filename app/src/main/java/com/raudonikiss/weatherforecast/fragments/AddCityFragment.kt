@@ -14,59 +14,61 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
-import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.viewModels.AddCityPresenter
 import kotlinx.android.synthetic.main.fragment_add_city.view.*
-import org.koin.android.ext.android.get
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class AddCityFragment : Fragment(), AddCityContract.View{
+class AddCityFragment : Fragment(), AddCityContract.View {
 
     //UI
-    private lateinit var mAutoCompleteFragment : AutocompleteSupportFragment
-    private lateinit var mRootView : View
+    private lateinit var mAutoCompleteFragment: AutocompleteSupportFragment
+    private lateinit var mRootView: View
     //Variables
-    private lateinit var mPresenter : AddCityContract.Presenter
+    private val viewModel : AddCityPresenter by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
         setUpListeners()
-        mPresenter = AddCityPresenter(this, get<AppDatabase>().cityDao())
+
         return mRootView
     }
 
     override fun onDetach() {
-        mPresenter.onDetach()
+        viewModel.dispose()
         super.onDetach()
     }
 
-    private fun setUpListeners(){
+    private fun setUpListeners() {
         setUpSearch()
         mRootView.button_confirm.setOnClickListener {
-            mPresenter.saveCity()
+            viewModel.saveCity()
+            navigateToCities()
         }
         mAutoCompleteFragment.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener {
             mAutoCompleteFragment.setText("")
-            mPresenter.clearCityData()
+            viewModel.clearCityData()
         }
     }
 
-    private fun setUpSearch(){
-        mAutoCompleteFragment = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+    private fun setUpSearch() {
+        mAutoCompleteFragment =
+            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         mAutoCompleteFragment.setTypeFilter(TypeFilter.CITIES)
         mAutoCompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS_COMPONENTS))
 
-        mAutoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener{
+        mAutoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
-                if(place.addressComponents != null){
-                    for(component in place.addressComponents!!.asList()){
-                        if(component.types[0] == "country"){
+                if (place.addressComponents != null) {
+                    for (component in place.addressComponents!!.asList()) {
+                        if (component.types[0] == "country") {
                             //City id, name, country code, country name
-                            mPresenter.setCityData(place.id, place.name, component.shortName, component.name)
+                            viewModel.setCityData(place.name, component.shortName)
                             break
                         }
                     }
                 }
             }
+
             override fun onError(p0: Status) {
                 displayError(ERROR_SEARCH)
             }
@@ -75,12 +77,13 @@ class AddCityFragment : Fragment(), AddCityContract.View{
     }
 
     override fun displayError(id: Int) {
-        when(id){
+        when (id) {
             ERROR_SEARCH -> Snackbar.make(mRootView, R.string.search_error, Snackbar.LENGTH_SHORT).show()
             ERROR_DUPLICATE -> Snackbar.make(mRootView, R.string.error_duplicate_city, Snackbar.LENGTH_SHORT).show()
             ERROR_NO_DATA -> Snackbar.make(mRootView, R.string.no_city_error, Snackbar.LENGTH_SHORT).show()
         }
     }
+
     override fun displaySuccess() {
         Snackbar.make(mRootView, getString(R.string.city_add_success), Snackbar.LENGTH_SHORT).show()
     }
@@ -89,7 +92,7 @@ class AddCityFragment : Fragment(), AddCityContract.View{
         findNavController().navigate(R.id.citiesFragment)
     }
 
-    companion object{
+    companion object {
         const val ERROR_SEARCH = 1
         const val ERROR_DUPLICATE = 2
         const val ERROR_NO_DATA = 3

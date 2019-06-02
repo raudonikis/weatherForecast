@@ -11,8 +11,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.raudonikiss.weatherforecast.objects.City
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -20,20 +22,12 @@ class MainActivity : AppCompatActivity() {
     //UI
     private lateinit var mBottomNavigation: BottomNavigationView
     private lateinit var mNavController: NavController
-    //Variables
-    private val viewModel: CitiesViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupNavigation()
         Places.initialize(this, BuildConfig.PlacesApiKey)
-        setUpObservers()
-    }
-
-    override fun onDestroy() {
-        viewModel.dispose()
-        super.onDestroy()
     }
 
     private fun setupNavigation() {
@@ -50,18 +44,6 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration)
     }
 
-    private fun setUpObservers() {
-        viewModel.getAllCities().observe(this,
-            Observer { t ->
-                Log.v(TAG, t.toString())
-                val difference = t.size - viewModel.oldCityListSize
-                if(difference > 0){
-                    viewModel.updateNewForecasts(difference)
-                }
-                viewModel.oldCityListSize = t.size
-            })
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             android.R.id.home -> {
@@ -70,9 +52,5 @@ class MainActivity : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
-    }
-
-    companion object {
-        const val TAG = "MainActivity"
     }
 }

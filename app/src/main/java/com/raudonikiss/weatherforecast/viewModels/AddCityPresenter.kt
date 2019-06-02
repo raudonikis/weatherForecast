@@ -1,81 +1,85 @@
 package com.raudonikiss.weatherforecast.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.raudonikiss.weatherforecast.contracts.AddCityContract
+import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.data.CityDao
+import com.raudonikiss.weatherforecast.data.WeatherForecastDao
+import com.raudonikiss.weatherforecast.network.Webservice
+import com.raudonikiss.weatherforecast.network.response.WeatherForecastResponseBody
 import com.raudonikiss.weatherforecast.objects.City
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class AddCityPresenter(private val view: AddCityContract.View, private val cityDao : CityDao) : ViewModel(), AddCityContract.Presenter {
+class AddCityPresenter(private val database : AppDatabase, private val webservice: Webservice) : ViewModel(){
 
-    private var cityId = ""
     private var cityName = ""
     private var countryId = ""
-    private var countryName = ""
 
-    private val disposables = CompositeDisposable()
+    private val disposable = CompositeDisposable()
 
-    override fun setCityData(cityId: String?, cityName: String?, countryId: String?, countryName: String?) {
-        if(cityId != null && cityName != null && countryId != null && countryName != null){
-            this.cityId = cityId
+    fun setCityData(cityName: String?, countryId: String?) {
+        if( cityName != null && countryId != null){
             this.cityName = cityName
             this.countryId = countryId
-            this.countryName = countryName
         }else{
-            view.displayError(ERROR_SEARCH)
+//            view.displayError(ERROR_SEARCH)
         }
     }
 
-    override fun clearCityData() {
-        cityId = ""
+    fun clearCityData() {
         cityName = ""
         countryId = ""
-        countryName = ""
     }
 
-    override fun onDetach() {
-        disposables.dispose()
+    fun dispose() {
+        disposable.dispose()
     }
 
-    override fun saveCity() {
+    fun saveCity() {
         if(!isCityDataEmpty()){
-
-            val city = City(cityId, cityName, countryName, countryId)
-            addCity(city)
-
+            updateForecast()
         }else{
-            view.displayError(ERROR_NO_DATA)
+//            view.displayError(ERROR_NO_DATA)
         }
     }
 
     private fun isCityDataEmpty(): Boolean{
-        return cityId.isBlank() || cityName.isBlank() || countryId.isBlank() || countryName.isBlank()
+        return cityName.isBlank() || countryId.isBlank()
     }
 
-    private fun addCity(city: City){
-        var result = 0L
+    private fun updateForecast() {
+        val call = webservice.getWeatherData("$cityName,$countryId")
+        call.enqueue(object : Callback<WeatherForecastResponseBody> {
+            override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
+                Log.v("CitiesFragment", "Failure")
+            }
 
-        disposables.add(Completable.fromAction {
-            result = cityDao.insertCity(city)
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if(result == -1L){
-                    view.displayError(ERROR_DUPLICATE)
-                }else{
-                    view.navigateToCities()
-                    view.displaySuccess()
+            override fun onResponse(
+                call: Call<WeatherForecastResponseBody>,
+                response: Response<WeatherForecastResponseBody>
+            ) {
+                val body = response.body()
+                if (body != null) {
+
+                    Log.d("response", body.toString())
+
+                    val weatherForecast = body.toWeatherForecast()
+                    disposable.add(
+                        Completable.fromAction {
+                            database.weatherForecastDao().insertWeatherForecast(weatherForecast)
+                        }.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe()
+                    )
                 }
-            })
-    }
-
-    companion object{
-        const val ERROR_SEARCH = 1
-        const val ERROR_DUPLICATE = 2
-        const val ERROR_NO_DATA = 3
+            }
+        })
     }
 }

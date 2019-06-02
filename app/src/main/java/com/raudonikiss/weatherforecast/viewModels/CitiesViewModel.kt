@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
 import com.raudonikiss.weatherforecast.network.response.WeatherForecastResponseBody
-import com.raudonikiss.weatherforecast.objects.City
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,11 +17,11 @@ import retrofit2.Response
 
 class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservice: Webservice) : ViewModel() {
 
-    var oldCityListSize = 0
+//    var oldCityListSize = 0
 
-    private val cityList: LiveData<List<City>> by lazy {
+    /*private val cityList: LiveData<List<City>> by lazy {
         mDatabase.cityDao().getCities()
-    }
+    }*/
 
     private val weatherForecastList: LiveData<List<WeatherForecast>> by lazy {
         mDatabase.weatherForecastDao().getWeatherForecasts()
@@ -30,50 +29,46 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
 
     private val disposable = CompositeDisposable()
 
-    fun getAllCities(): LiveData<List<City>> {
+    /*fun getAllCities(): LiveData<List<City>> {
         return cityList
-    }
+    }*/
 
     fun getAllForecasts(): LiveData<List<WeatherForecast>> {
         return weatherForecastList
     }
 
     fun updateAllForecasts() {
-        cityList.value?.forEach {
+        weatherForecastList.value?.forEach {
             updateForecast(it)
         }
     }
 
-    fun updateNewForecasts(size : Int){
+    /*fun updateNewForecasts(size : Int){
         val newCities = cityList.value?.takeLast(size)
         newCities?.forEach {
             updateForecast(it)
         }
-    }
+    }*/
 
     fun removeListItem(position: Int) {
-        val city = cityList.value?.get(position)
-        if (city != null) {
+        val forecast = weatherForecastList.value?.get(position)
+        if (forecast != null) {
             disposable.add(
                 Completable.fromAction {
-                    mDatabase.weatherForecastDao().removeForecast(city.name, city.countryCode)
+                    mDatabase.weatherForecastDao().deleteForecast(forecast)
                 }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe()
+                    .subscribe({
+                        Log.v("CitiesViewModel", "remove forecast")
+                    },{
+                        Log.v("CitiesViewModel", it.message)
+                    })
             )
-            disposable.add(
-                Completable.fromAction {
-                    mDatabase.cityDao().removeCity(city)
-                }.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe()
-            )
-
         }
     }
 
-    private fun updateForecast(city: City) {
-        val call = mWebservice.getWeatherData(city.name + "," + city.countryCode)
+    private fun updateForecast(forecast: WeatherForecast) {
+        val call = mWebservice.getWeatherData(forecast.city_name +"," + forecast.country)
         call.enqueue(object : Callback<WeatherForecastResponseBody> {
             override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
                 Log.v("CitiesFragment", "Failure")
