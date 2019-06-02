@@ -82,7 +82,7 @@ class AddCityFragment : Fragment() {
         val status = getStatusMessage(context, responseStatus)
         if (status != null) {
             Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
-            if (viewModel.status.value == ResponseStatus.SUCCESS) {
+            if (viewModel.status.value == ResponseStatus.ADD_SUCCESS) {
                 navigateToCities()
             }
             viewModel.status.value = ResponseStatus.NONE

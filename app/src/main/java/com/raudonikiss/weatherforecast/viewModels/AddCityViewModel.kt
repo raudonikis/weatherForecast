@@ -41,8 +41,17 @@ class AddCityViewModel(private val database: AppDatabase, private val webservice
 
     fun saveCity() {
         if (!isCityDataEmpty()) {
-//            if(database.weatherForecastDao().getWeatherForecast(cityName, countryId) == null)
-            updateForecast()
+            disposable.add(database.weatherForecastDao().countItems(cityName, countryId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess {
+                    if (it > 0) {
+                        status.value = ResponseStatus.DUPLICATE
+                    } else {
+                        updateForecast()
+                    }
+                }
+                .subscribe())
         } else {
             status.value = ResponseStatus.EMPTY
         }
@@ -59,7 +68,7 @@ class AddCityViewModel(private val database: AppDatabase, private val webservice
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    status.value = ResponseStatus.SUCCESS
+                    status.value = ResponseStatus.ADD_SUCCESS
                     Log.d("response", it.toString())
                     val weatherForecast = it.toWeatherForecast()
                     thread {

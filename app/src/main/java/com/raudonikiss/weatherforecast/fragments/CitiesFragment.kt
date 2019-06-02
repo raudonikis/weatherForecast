@@ -41,12 +41,8 @@ class CitiesFragment : Fragment() {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
         setUpRecyclerView()
         setUpListeners()
-        return mRootView
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         setUpObservers()
+        return mRootView
     }
 
     private fun setUpListeners() {
@@ -78,14 +74,7 @@ class CitiesFragment : Fragment() {
 
     private fun setUpObservers() {
         viewModel.status.observe(viewLifecycleOwner, Observer {
-            if(viewModel.status.value != ResponseStatus.LOADING){
-                mSwipeRefreshLayout.isRefreshing = false
-            }
-            val status = getStatusMessage(context, it)
-            if (status != null) {
-                Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
-                viewModel.status.value = ResponseStatus.NONE
-            }
+            handleStatus(it)
         })
         viewModel.getAllForecasts().observe(viewLifecycleOwner,
             Observer { t ->
@@ -104,6 +93,17 @@ class CitiesFragment : Fragment() {
             mRootView.label_no_cities.visibility = View.VISIBLE
         } else {
             mRootView.label_no_cities.visibility = View.GONE
+        }
+    }
+
+    private fun handleStatus(responseStatus: ResponseStatus){
+        if(viewModel.status.value != ResponseStatus.LOADING){
+            mSwipeRefreshLayout.isRefreshing = false
+        }
+        val status = getStatusMessage(context, responseStatus)
+        if (status != null) {
+            Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
+            viewModel.status.value = ResponseStatus.NONE
         }
     }
 
