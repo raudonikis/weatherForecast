@@ -51,18 +51,18 @@ class CitiesFragment : Fragment() {
         setUpObservers()
     }
 
-    override fun onDetach() {
-        viewModel.dispose()
-        super.onDetach()
-    }
-
     private fun setUpListeners() {
         mRootView.fb_add_city.setOnClickListener {
             navigateToAddCity()
         }
         mSwipeRefreshLayout = mRootView.swipe_to_refresh
         mSwipeRefreshLayout.setOnRefreshListener {
+            //FIXME temporary fix
+            if(viewModel.getAllCities().value!!.isNotEmpty())
             viewModel.updateAllForecasts()
+            else{
+                mSwipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 

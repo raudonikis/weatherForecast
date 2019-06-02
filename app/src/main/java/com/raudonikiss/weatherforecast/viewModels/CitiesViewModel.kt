@@ -18,6 +18,8 @@ import retrofit2.Response
 
 class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservice: Webservice) : ViewModel() {
 
+    var oldCityListSize = 0
+
     private val cityList: LiveData<List<City>> by lazy {
         mDatabase.cityDao().getCities()
     }
@@ -42,12 +44,25 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
         }
     }
 
+    fun updateNewForecasts(size : Int){
+        val newCities = cityList.value?.takeLast(size)
+        newCities?.forEach {
+            updateForecast(it)
+        }
+    }
+
     fun removeListItem(position: Int) {
         val city = cityList.value?.get(position)
         if (city != null) {
             disposable.add(
                 Completable.fromAction {
                     mDatabase.weatherForecastDao().removeForecast(city.name, city.countryCode)
+                }.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+            )
+            disposable.add(
+                Completable.fromAction {
                     mDatabase.cityDao().removeCity(city)
                 }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

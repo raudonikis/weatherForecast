@@ -23,6 +23,6 @@ interface WeatherForecastDao {
     @Query("SELECT * FROM weather_forecasts")
     fun getAllWeatherForecasts(): Flowable<List<WeatherForecast>>
 
-    @Query("SELECT * FROM weather_forecasts ORDER BY datetime")
+    @Query("SELECT * FROM weather_forecasts")
     fun getWeatherForecasts(): LiveData<List<WeatherForecast>>
 }

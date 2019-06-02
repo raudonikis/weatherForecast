@@ -31,6 +31,11 @@ class MainActivity : AppCompatActivity() {
         setUpObservers()
     }
 
+    override fun onDestroy() {
+        viewModel.dispose()
+        super.onDestroy()
+    }
+
     private fun setupNavigation() {
         mBottomNavigation = bottom_navigation
         mNavController = findNavController(R.id.nav_host_fragment)
@@ -49,7 +54,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.getAllCities().observe(this,
             Observer { t ->
                 Log.v(TAG, t.toString())
-                viewModel.updateAllForecasts()
+                val difference = t.size - viewModel.oldCityListSize
+                if(difference > 0){
+                    viewModel.updateNewForecasts(difference)
+                }
+                viewModel.oldCityListSize = t.size
             })
     }
 
