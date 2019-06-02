@@ -34,8 +34,9 @@ class AddCityViewModel(private val database: AppDatabase, private val webservice
         countryId = ""
     }
 
-    fun dispose() {
+    override fun onCleared() {
         disposable.dispose()
+        super.onCleared()
     }
 
     fun saveCity() {
@@ -53,24 +54,20 @@ class AddCityViewModel(private val database: AppDatabase, private val webservice
 
     private fun updateForecast() {
         status.value = ResponseStatus.LOADING
-        disposable.add(webservice.getWeatherData("$cityName,$countryId")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                if (it != null) {
+        disposable.add(
+            webservice.getWeatherData("$cityName,$countryId")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
                     status.value = ResponseStatus.SUCCESS
                     Log.d("response", it.toString())
                     val weatherForecast = it.toWeatherForecast()
                     thread {
                         database.weatherForecastDao().insertWeatherForecast(weatherForecast)
                     }
-                } else {
+                }, {
                     status.value = ResponseStatus.NO_CITY_FOUND
-                }
-
-            }, {
-                status.value = ResponseStatus.RESPONSE_ERROR
-            })
+                })
         )
     }
 }

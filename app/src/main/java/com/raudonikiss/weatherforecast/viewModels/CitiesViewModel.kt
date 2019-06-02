@@ -13,10 +13,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlin.concurrent.thread
 
-class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservice: Webservice) : ViewModel() {
+class CitiesViewModel(private val database: AppDatabase, private val webservice: Webservice) : ViewModel() {
 
     private val weatherForecastList: LiveData<List<WeatherForecast>> by lazy {
-        mDatabase.weatherForecastDao().getWeatherForecasts()
+        database.weatherForecastDao().getWeatherForecasts()
     }
 
     private val disposable = CompositeDisposable()
@@ -27,46 +27,43 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
     }
 
     fun updateAllForecasts() {
-        if(weatherForecastList.value?.size == 0) status.value = ResponseStatus.NONE
-        else{
+        if (weatherForecastList.value?.size == 0) status.value = ResponseStatus.NONE
+        else {
             weatherForecastList.value?.forEach {
                 updateForecast(it)
             }
         }
     }
 
+    override fun onCleared() {
+        disposable.dispose()
+        super.onCleared()
+    }
+
     fun removeListItem(position: Int) {
         val forecast = weatherForecastList.value?.get(position)
         if (forecast != null) {
             thread {
-                mDatabase.weatherForecastDao().deleteForecast(forecast)
+                database.weatherForecastDao().deleteForecast(forecast)
             }
         }
     }
 
     private fun updateForecast(forecast: WeatherForecast) {
         status.value = ResponseStatus.LOADING
-        disposable.add(mWebservice.getWeatherData(forecast.city_name + "," + forecast.country)
+        disposable.add(webservice.getWeatherData(forecast.city_name + "," + forecast.country)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                if(it != null){
-                    status.value = ResponseStatus.SUCCESS
-                    Log.d("response", it.toString())
-                    val weatherForecast = it.toWeatherForecast()
-                    thread{
-                        mDatabase.weatherForecastDao().insertWeatherForecast(weatherForecast)
-                    }
-                }else{
-                    status.value = ResponseStatus.NO_CITY_FOUND
+                status.value = ResponseStatus.SUCCESS
+                Log.d("response", it.toString())
+                val weatherForecast = it.toWeatherForecast()
+                thread {
+                    database.weatherForecastDao().insertWeatherForecast(weatherForecast)
                 }
-
-            },{
-                status.value = ResponseStatus.RESPONSE_ERROR
-            }))
-    }
-
-    fun dispose() {
-        disposable.dispose()
+            }, {
+                status.value = ResponseStatus.NO_CITY_FOUND
+            })
+        )
     }
 }

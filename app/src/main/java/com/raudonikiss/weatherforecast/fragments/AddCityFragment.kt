@@ -15,7 +15,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.error_handling.ResponseStatus
-import com.raudonikiss.weatherforecast.error_handling.StatusEvent
+import com.raudonikiss.weatherforecast.error_handling.Utils.Companion.getStatusMessage
 import com.raudonikiss.weatherforecast.viewModels.AddCityViewModel
 import kotlinx.android.synthetic.main.fragment_add_city.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -33,11 +33,6 @@ class AddCityFragment : Fragment() {
         setUpListeners()
         setUpObservers()
         return mRootView
-    }
-
-    override fun onDetach() {
-        viewModel.dispose()
-        super.onDetach()
     }
 
     private fun setUpListeners() {
@@ -62,7 +57,7 @@ class AddCityFragment : Fragment() {
                 if (place.addressComponents != null) {
                     for (component in place.addressComponents!!.asList()) {
                         if (component.types[0] == "country") {
-                            //City id, name, country code, country name
+                            //City name and country ID
                             viewModel.setCityData(place.name, component.shortName)
                             break
                         }
@@ -79,24 +74,22 @@ class AddCityFragment : Fragment() {
 
     private fun setUpObservers() {
         viewModel.status.observe(viewLifecycleOwner, Observer {
-            val status = getStatusMessage(it)
-            if (status != null) {
-                Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
-                if(viewModel.status.value == ResponseStatus.SUCCESS){
-                    navigateToCities()
-                }
-                viewModel.status.value = ResponseStatus.NONE
-            }
+            handleStatus(it)
         })
+    }
+
+    private fun handleStatus(responseStatus: ResponseStatus) {
+        val status = getStatusMessage(context, responseStatus)
+        if (status != null) {
+            Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
+            if (viewModel.status.value == ResponseStatus.SUCCESS) {
+                navigateToCities()
+            }
+            viewModel.status.value = ResponseStatus.NONE
+        }
     }
 
     private fun navigateToCities() {
         findNavController().navigate(R.id.citiesFragment)
-    }
-
-    private fun getStatusMessage(statusEvent: StatusEvent) = if (statusEvent.getErrorResource() == 0) {
-        null
-    } else {
-        getString(statusEvent.getErrorResource())
     }
 }

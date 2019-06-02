@@ -3,7 +3,7 @@ package com.raudonikiss.weatherforecast.error_handling
 import androidx.annotation.StringRes
 import com.raudonikiss.weatherforecast.R
 
-enum class ResponseStatus(@StringRes private val resourceId : Int):
+enum class ResponseStatus(@StringRes private val resourceId: Int) :
     StatusEvent {
     NONE(0),
     EMPTY(R.string.error_no_city_selected),

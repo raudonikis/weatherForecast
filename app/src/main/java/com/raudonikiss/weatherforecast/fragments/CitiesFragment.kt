@@ -17,7 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
 import com.raudonikiss.weatherforecast.error_handling.ResponseStatus
-import com.raudonikiss.weatherforecast.error_handling.StatusEvent
+import com.raudonikiss.weatherforecast.error_handling.Utils.Companion.getStatusMessage
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.fragment_cities.view.*
@@ -42,11 +42,6 @@ class CitiesFragment : Fragment() {
         setUpRecyclerView()
         setUpListeners()
         return mRootView
-    }
-
-    override fun onDetach() {
-        viewModel.dispose()
-        super.onDetach()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -86,7 +81,7 @@ class CitiesFragment : Fragment() {
             if(viewModel.status.value != ResponseStatus.LOADING){
                 mSwipeRefreshLayout.isRefreshing = false
             }
-            val status = getStatusMessage(it)
+            val status = getStatusMessage(context, it)
             if (status != null) {
                 Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
                 viewModel.status.value = ResponseStatus.NONE
@@ -126,11 +121,4 @@ class CitiesFragment : Fragment() {
         }
 
     }
-
-    private fun getStatusMessage(statusEvent: StatusEvent) = if (statusEvent.getErrorResource() == 0) {
-        null
-    } else {
-        getString(statusEvent.getErrorResource())
-    }
-
 }
