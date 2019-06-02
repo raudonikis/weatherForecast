@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.model.Place
@@ -13,22 +14,32 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
+import com.raudonikiss.weatherforecast.error_handling.ResponseStatus
+import com.raudonikiss.weatherforecast.error_handling.StatusEvent
 import com.raudonikiss.weatherforecast.viewModels.AddCityViewModel
 import kotlinx.android.synthetic.main.fragment_add_city.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class AddCityFragment : Fragment(){
+class AddCityFragment : Fragment() {
 
     //UI
     private lateinit var mAutoCompleteFragment: AutocompleteSupportFragment
     private lateinit var mRootView: View
     //Variables
-    private val viewModel : AddCityViewModel by viewModel()
+    private val viewModel: AddCityViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
         setUpListeners()
-
+        viewModel.status.observe(viewLifecycleOwner, Observer {
+            val status = getStatusMessage(it)
+            if (status != null) {
+                Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
+                if(viewModel.status.value == ResponseStatus.SUCCESS){
+                    navigateToCities()
+                }
+            }
+        })
         return mRootView
     }
 
@@ -41,6 +52,7 @@ class AddCityFragment : Fragment(){
         setUpSearch()
         mRootView.button_confirm.setOnClickListener {
             viewModel.saveCity()
+            if(viewModel.status.value == ResponseStatus.NONE)
             navigateToCities()
         }
         mAutoCompleteFragment.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener {
@@ -69,32 +81,19 @@ class AddCityFragment : Fragment(){
             }
 
             override fun onError(p0: Status) {
-                displayError(ERROR_SEARCH)
+                viewModel.status.postValue(ResponseStatus.SEARCH_ERROR)
             }
 
         })
-    }
-
-    private fun displayError(id: Int) {
-        when (id) {
-            ERROR_SEARCH -> Snackbar.make(mRootView, R.string.search_error, Snackbar.LENGTH_SHORT).show()
-            ERROR_DUPLICATE -> Snackbar.make(mRootView, R.string.error_duplicate_city, Snackbar.LENGTH_SHORT).show()
-            ERROR_NO_DATA -> Snackbar.make(mRootView, R.string.no_city_error, Snackbar.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun displaySuccess() {
-        Snackbar.make(mRootView, getString(R.string.city_add_success), Snackbar.LENGTH_SHORT).show()
     }
 
     private fun navigateToCities() {
         findNavController().navigate(R.id.citiesFragment)
     }
 
-    companion object {
-        const val ERROR_SEARCH = 1
-        const val ERROR_DUPLICATE = 2
-        const val ERROR_NO_DATA = 3
+    private fun getStatusMessage(statusEvent: StatusEvent) = if (statusEvent.getErrorResource() == 0) {
+        null
+    } else {
+        getString(statusEvent.getErrorResource())
     }
-
 }
