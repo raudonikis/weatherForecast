@@ -2,13 +2,9 @@ package com.raudonikiss.weatherforecast.viewModels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.raudonikiss.weatherforecast.contracts.AddCityContract
 import com.raudonikiss.weatherforecast.data.AppDatabase
-import com.raudonikiss.weatherforecast.data.CityDao
-import com.raudonikiss.weatherforecast.data.WeatherForecastDao
 import com.raudonikiss.weatherforecast.network.Webservice
 import com.raudonikiss.weatherforecast.network.response.WeatherForecastResponseBody
-import com.raudonikiss.weatherforecast.objects.City
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -17,7 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AddCityPresenter(private val database : AppDatabase, private val webservice: Webservice) : ViewModel(){
+class AddCityViewModel(private val database : AppDatabase, private val webservice: Webservice) : ViewModel(){
 
     private var cityName = ""
     private var countryId = ""

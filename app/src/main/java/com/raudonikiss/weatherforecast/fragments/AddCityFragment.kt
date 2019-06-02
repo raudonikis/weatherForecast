@@ -13,18 +13,17 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
-import com.raudonikiss.weatherforecast.contracts.AddCityContract
-import com.raudonikiss.weatherforecast.viewModels.AddCityPresenter
+import com.raudonikiss.weatherforecast.viewModels.AddCityViewModel
 import kotlinx.android.synthetic.main.fragment_add_city.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class AddCityFragment : Fragment(), AddCityContract.View {
+class AddCityFragment : Fragment(){
 
     //UI
     private lateinit var mAutoCompleteFragment: AutocompleteSupportFragment
     private lateinit var mRootView: View
     //Variables
-    private val viewModel : AddCityPresenter by viewModel()
+    private val viewModel : AddCityViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
@@ -76,7 +75,7 @@ class AddCityFragment : Fragment(), AddCityContract.View {
         })
     }
 
-    override fun displayError(id: Int) {
+    private fun displayError(id: Int) {
         when (id) {
             ERROR_SEARCH -> Snackbar.make(mRootView, R.string.search_error, Snackbar.LENGTH_SHORT).show()
             ERROR_DUPLICATE -> Snackbar.make(mRootView, R.string.error_duplicate_city, Snackbar.LENGTH_SHORT).show()
@@ -84,11 +83,11 @@ class AddCityFragment : Fragment(), AddCityContract.View {
         }
     }
 
-    override fun displaySuccess() {
+    private fun displaySuccess() {
         Snackbar.make(mRootView, getString(R.string.city_add_success), Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun navigateToCities() {
+    private fun navigateToCities() {
         findNavController().navigate(R.id.citiesFragment)
     }
 

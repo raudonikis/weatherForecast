@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.raudonikiss.weatherforecast.BuildConfig
 import com.raudonikiss.weatherforecast.data.AppDatabase
 import com.raudonikiss.weatherforecast.network.Webservice
-import com.raudonikiss.weatherforecast.viewModels.AddCityPresenter
+import com.raudonikiss.weatherforecast.viewModels.AddCityViewModel
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.viewmodel.dsl.viewModel
@@ -39,7 +39,7 @@ object AppModule{
             PreferenceManager.getDefaultSharedPreferences(get())
         }
         viewModel { CitiesViewModel(get(), get()) }
-        viewModel { AddCityPresenter(get(), get()) }
+        viewModel { AddCityViewModel(get(), get()) }
     }
 
 }

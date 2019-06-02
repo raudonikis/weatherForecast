@@ -14,24 +14,15 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.concurrent.thread
 
 class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservice: Webservice) : ViewModel() {
-
-//    var oldCityListSize = 0
-
-    /*private val cityList: LiveData<List<City>> by lazy {
-        mDatabase.cityDao().getCities()
-    }*/
 
     private val weatherForecastList: LiveData<List<WeatherForecast>> by lazy {
         mDatabase.weatherForecastDao().getWeatherForecasts()
     }
 
     private val disposable = CompositeDisposable()
-
-    /*fun getAllCities(): LiveData<List<City>> {
-        return cityList
-    }*/
 
     fun getAllForecasts(): LiveData<List<WeatherForecast>> {
         return weatherForecastList
@@ -43,17 +34,13 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
         }
     }
 
-    /*fun updateNewForecasts(size : Int){
-        val newCities = cityList.value?.takeLast(size)
-        newCities?.forEach {
-            updateForecast(it)
-        }
-    }*/
-
     fun removeListItem(position: Int) {
         val forecast = weatherForecastList.value?.get(position)
         if (forecast != null) {
-            disposable.add(
+            thread {
+                mDatabase.weatherForecastDao().deleteForecast(forecast)
+            }
+            /*disposable.add(
                 Completable.fromAction {
                     mDatabase.weatherForecastDao().deleteForecast(forecast)
                 }.subscribeOn(Schedulers.io())
@@ -63,12 +50,12 @@ class CitiesViewModel(private val mDatabase: AppDatabase, private val mWebservic
                     },{
                         Log.v("CitiesViewModel", it.message)
                     })
-            )
+            )*/
         }
     }
 
     private fun updateForecast(forecast: WeatherForecast) {
-        val call = mWebservice.getWeatherData(forecast.city_name +"," + forecast.country)
+        val call = mWebservice.getWeatherData(forecast.city_name + "," + forecast.country)
         call.enqueue(object : Callback<WeatherForecastResponseBody> {
             override fun onFailure(call: Call<WeatherForecastResponseBody>, t: Throwable) {
                 Log.v("CitiesFragment", "Failure")

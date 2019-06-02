@@ -86,7 +86,7 @@ class CitiesFragment : Fragment() {
     }
 
     private fun setUpObservers() {
-        viewModel.getAllForecasts().observe(this,
+        viewModel.getAllForecasts().observe(viewLifecycleOwner,
             Observer { t ->
                 updateList(t)
                 Log.v("CitiesFragment", t.toString())
