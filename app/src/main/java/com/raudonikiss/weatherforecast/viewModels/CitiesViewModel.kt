@@ -62,7 +62,7 @@ class CitiesViewModel(private val database: AppDatabase, private val webservice:
                     database.weatherForecastDao().insertWeatherForecast(weatherForecast)
                 }
             }, {
-                status.value = ResponseStatus.NO_CITY_FOUND
+                status.value = ResponseStatus.NETWORK_ERROR
             })
         )
     }
