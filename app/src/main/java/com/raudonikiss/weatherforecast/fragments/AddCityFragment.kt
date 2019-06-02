@@ -31,15 +31,7 @@ class AddCityFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = inflater.inflate(R.layout.fragment_add_city, container, false)
         setUpListeners()
-        viewModel.status.observe(viewLifecycleOwner, Observer {
-            val status = getStatusMessage(it)
-            if (status != null) {
-                Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
-                if(viewModel.status.value == ResponseStatus.SUCCESS){
-                    navigateToCities()
-                }
-            }
-        })
+        setUpObservers()
         return mRootView
     }
 
@@ -52,8 +44,6 @@ class AddCityFragment : Fragment() {
         setUpSearch()
         mRootView.button_confirm.setOnClickListener {
             viewModel.saveCity()
-            if(viewModel.status.value == ResponseStatus.NONE)
-            navigateToCities()
         }
         mAutoCompleteFragment.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener {
             mAutoCompleteFragment.setText("")
@@ -84,6 +74,19 @@ class AddCityFragment : Fragment() {
                 viewModel.status.postValue(ResponseStatus.SEARCH_ERROR)
             }
 
+        })
+    }
+
+    private fun setUpObservers() {
+        viewModel.status.observe(viewLifecycleOwner, Observer {
+            val status = getStatusMessage(it)
+            if (status != null) {
+                Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
+                if(viewModel.status.value == ResponseStatus.SUCCESS){
+                    navigateToCities()
+                }
+                viewModel.status.value = ResponseStatus.NONE
+            }
         })
     }
 

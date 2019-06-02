@@ -8,14 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
 import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
+import com.raudonikiss.weatherforecast.error_handling.ResponseStatus
+import com.raudonikiss.weatherforecast.error_handling.StatusEvent
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
 import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import kotlinx.android.synthetic.main.fragment_cities.view.*
@@ -39,7 +41,6 @@ class CitiesFragment : Fragment() {
         mRootView = inflater.inflate(R.layout.fragment_cities, container, false)
         setUpRecyclerView()
         setUpListeners()
-
         return mRootView
     }
 
@@ -59,12 +60,7 @@ class CitiesFragment : Fragment() {
         }
         mSwipeRefreshLayout = mRootView.swipe_to_refresh
         mSwipeRefreshLayout.setOnRefreshListener {
-            //FIXME temporary fix
-            if(viewModel.getAllForecasts().value!!.isNotEmpty())
-                viewModel.updateAllForecasts()
-            else{
-                mSwipeRefreshLayout.isRefreshing = false
-            }
+            viewModel.updateAllForecasts()
         }
     }
 
@@ -86,11 +82,20 @@ class CitiesFragment : Fragment() {
     }
 
     private fun setUpObservers() {
+        viewModel.status.observe(viewLifecycleOwner, Observer {
+            if(viewModel.status.value != ResponseStatus.LOADING){
+                mSwipeRefreshLayout.isRefreshing = false
+            }
+            val status = getStatusMessage(it)
+            if (status != null) {
+                Snackbar.make(mRootView, status, Snackbar.LENGTH_SHORT).show()
+                viewModel.status.value = ResponseStatus.NONE
+            }
+        })
         viewModel.getAllForecasts().observe(viewLifecycleOwner,
             Observer { t ->
                 updateList(t)
                 Log.v("CitiesFragment", t.toString())
-                mSwipeRefreshLayout.isRefreshing = false
             })
     }
 
@@ -120,6 +125,12 @@ class CitiesFragment : Fragment() {
             viewModel.removeListItem(viewHolder.adapterPosition)
         }
 
+    }
+
+    private fun getStatusMessage(statusEvent: StatusEvent) = if (statusEvent.getErrorResource() == 0) {
+        null
+    } else {
+        getString(statusEvent.getErrorResource())
     }
 
 }

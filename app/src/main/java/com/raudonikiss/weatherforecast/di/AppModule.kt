@@ -10,6 +10,7 @@ import com.raudonikiss.weatherforecast.viewModels.CitiesViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object AppModule{
@@ -32,6 +33,7 @@ object AppModule{
                 .baseUrl(BuildConfig.WeatherApiBase)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
                 .create(Webservice::class.java)
         }
