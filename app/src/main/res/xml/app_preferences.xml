@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+            android:key="units"
+            android:title="Temperature units"
+            android:defaultValue="°K"
+            android:entries="@array/temperature_units_array"
+            android:entryValues="@array/temperature_units_array"
+            android:summary="%s"/>
+
+    <Preference
+            android:key="button_add"
+            android:title="Add a city"
+            android:icon="@drawable/ic_add_circle_blue_32dp"/>
+
+</PreferenceScreen>
