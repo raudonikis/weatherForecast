@@ -19,6 +19,7 @@ class CitiesViewModel(private val database: AppDatabase, private val webservice:
         database.weatherForecastDao().getWeatherForecasts()
     }
 
+    private var networkErrorShown = false
     private val disposable = CompositeDisposable()
     val status = MutableLiveData<ResponseStatus>()
 
@@ -29,6 +30,7 @@ class CitiesViewModel(private val database: AppDatabase, private val webservice:
     fun updateAllForecasts() {
         if (weatherForecastList.value?.size == 0) status.value = ResponseStatus.NONE
         else {
+            networkErrorShown = false
             weatherForecastList.value?.forEach {
                 updateForecast(it)
             }
@@ -62,7 +64,10 @@ class CitiesViewModel(private val database: AppDatabase, private val webservice:
                     database.weatherForecastDao().insertWeatherForecast(weatherForecast)
                 }
             }, {
-                status.value = ResponseStatus.NETWORK_ERROR
+                if(!networkErrorShown) {
+                    status.value = ResponseStatus.NETWORK_ERROR
+                    networkErrorShown = true
+                }
             })
         )
     }
