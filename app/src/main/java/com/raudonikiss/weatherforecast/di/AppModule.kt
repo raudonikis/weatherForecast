@@ -1,6 +1,6 @@
 package com.raudonikiss.weatherforecast.di
 
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import androidx.room.Room
 import com.raudonikiss.weatherforecast.BuildConfig
 import com.raudonikiss.weatherforecast.data.AppDatabase
