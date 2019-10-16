@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.raudonikiss.weatherforecast.R
-import com.raudonikiss.weatherforecast.adapters.CitiesAdapter
+import com.raudonikiss.weatherforecast.adapters.WeatherForecastAdapter
 import com.raudonikiss.weatherforecast.error_handling.ResponseStatus
 import com.raudonikiss.weatherforecast.error_handling.Utils.Companion.getStatusMessage
 import com.raudonikiss.weatherforecast.objects.WeatherForecast
@@ -29,7 +29,7 @@ class CitiesFragment : Fragment() {
     //UI
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mViewManager: RecyclerView.LayoutManager
-    private lateinit var mViewAdapter: CitiesAdapter
+    private lateinit var mViewAdapter: WeatherForecastAdapter
     private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     //Variables
     private val mSharedPreferences: SharedPreferences by inject()
@@ -61,7 +61,7 @@ class CitiesFragment : Fragment() {
         val units = mSharedPreferences.getString("units", "°K")
         if (units != null) mTempUnits = units
 
-        mViewAdapter = CitiesAdapter(listOf(), mTempUnits)
+        mViewAdapter = WeatherForecastAdapter(mTempUnits)
 
         mRecyclerView = mRootView.cities_recycler_view.apply {
             layoutManager = mViewManager
@@ -88,7 +88,7 @@ class CitiesFragment : Fragment() {
     }
 
     private fun updateList(list: List<WeatherForecast>) {
-        mViewAdapter.updateList(list)
+        mViewAdapter.submitList(list)
         if (list.isEmpty()) {
             mRootView.label_no_cities.visibility = View.VISIBLE
         } else {
